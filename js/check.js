@@ -1,0 +1,82 @@
+'use strict';
+/* Answer checking. Every checker returns { ok, hint? }. */
+const CK = (() => {
+  const rev = s => s.split('').reverse().join('');
+  const norm = s => String(s || '')
+    .replace(/\s+/g, '')
+    .replace(/angle/ig, '∠').replace(/triangle/ig, '△')
+    .replace(/[<∡]/g, '∠').replace(/[Δ∆]/g, '△')
+    .toUpperCase();
+  const alts = ans => String(ans).split('/');
+
+  function side(inp, ans) {
+    const s = norm(inp);
+    if (!s) return { ok: false, empty: true };
+    for (const a of alts(ans)) if (s === a || s === rev(a)) return { ok: true };
+    if (/^[A-Z]{2}$/.test(s)) return { ok: false };
+    return { ok: false, hint: 'Name a side with its two end-points, e.g. AB.' };
+  }
+
+  function angle(inp, ans) {
+    const s = norm(inp);
+    if (!s) return { ok: false, empty: true };
+    const A = alts(ans);
+    const m3 = s.match(/^∠?([A-Z]{3})$/);
+    if (m3) {
+      const t = m3[1];
+      const hit = A.some(a => t === a || t === rev(a));
+      if (hit && !s.startsWith('∠')) return { ok: false, hint: `Nearly — write the angle sign too: ∠${t}.` };
+      if (hit) return { ok: true };
+      return { ok: false };
+    }
+    const m1 = s.match(/^∠?([A-Z])$/);
+    if (m1) {
+      if (A.some(a => a[1] === m1[1])) return { ok: false, hint: `Use the full name with three letters, e.g. ∠${A[0]} (not ∠${m1[1]}).`, trap: 'fullname' };
+      return { ok: false, hint: 'Use the full name of the angle with three letters, e.g. ∠ABC.', trap: 'fullname' };
+    }
+    return { ok: false, hint: 'Write the angle like this: ∠ABC (the middle letter is the vertex).' };
+  }
+
+  function num(inp, ans, tol = 0.051) {
+    const s = String(inp || '').replace(/[°˚º\s]|cm/gi, '').replace(/−/g, '-');
+    if (!s) return { ok: false, empty: true };
+    const v = Number(s);
+    if (!isFinite(v)) return { ok: false, hint: 'Type a number only (no units needed).' };
+    return { ok: alts(ans).some(a => Math.abs(v - Number(a)) <= tol), val: v };
+  }
+
+  function tri(inp, ans) {
+    const s = norm(inp).replace(/^△/, '');
+    if (!s) return { ok: false, empty: true };
+    for (const a of alts(ans)) {
+      if (s === a) return { ok: true };
+      if (s.length === a.length && s.split('').sort().join('') === a.split('').sort().join('')) {
+        return { ok: false, hint: 'Right letters, wrong order. The order must match the corresponding vertices.', trap: 'order' };
+      }
+    }
+    return { ok: false };
+  }
+
+  function text(inp, ans) {
+    const s = String(inp || '').trim().toLowerCase();
+    if (!s) return { ok: false, empty: true };
+    return { ok: alts(ans).some(a => a.trim().toLowerCase() === s) };
+  }
+
+  /* Congruence statement: student wrote △L ≅ △R; the true correspondence is t1[i] <-> t2[i].
+     Any consistent re-ordering is accepted (△BAC ≅ △QPR is the same as △ABC ≅ △PQR). */
+  function statement(L, R, t1, t2) {
+    L = L.join ? L.join('') : L; R = R.join ? R.join('') : R;
+    if (L.length !== t1.length || R.length !== t1.length || L.includes(' ') || R.includes(' ')) return { ok: false, hint: 'Fill in all the letters.' };
+    const map = {}, inv = {};
+    [...t1].forEach((c, i) => { map[c] = t2[i]; inv[t2[i]] = c; });
+    const sortS = s => s.split('').sort().join('');
+    const tryDir = (from, to, m) => sortS(L) === sortS(from) && sortS(R) === sortS(to) && [...L].every((c, i) => m[c] === R[i]);
+    if (tryDir(t1, t2, map) || tryDir(t2, t1, inv)) return { ok: true };
+    const setsOk = (sortS(L) === sortS(t1) && sortS(R) === sortS(t2)) || (sortS(L) === sortS(t2) && sortS(R) === sortS(t1));
+    if (setsOk) return { ok: false, hint: 'The letters are right but the order is not. Corresponding vertices must be in the same position on both sides.', trap: 'order' };
+    return { ok: false, hint: 'Check which vertices belong to which triangle.' };
+  }
+
+  return { norm, side, angle, num, tri, text, statement, rev };
+})();
