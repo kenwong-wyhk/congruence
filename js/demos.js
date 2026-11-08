@@ -36,66 +36,88 @@ const DEMO = (() => {
       draw();
     }
     const world = () => base.map(p => V.add(st.pos, V.rot(st.flip ? [-p[0], p[1]] : p, st.ang)));
+    // st.done: the shapes coincide right now; st.matched: they have fitted at least once
+    // (after that, matching sides keep the same colour on both shapes, even when pulled apart).
     function draw() {
       U.clear(svg);
       const gF = mk('g', {}, svg), gM = mk('g', {}, svg), gC = mk('g', {}, svg), gT = mk('g', {}, svg);
       const n = base.length;
-      // when they coincide, colour each pair of matching sides
-      if (st.done) {
+      const sideCol = i => G.COL((i % 3) + 1);
+      mk('polygon', { points: fixedPts.map(p => p.map(f2).join(',')).join(' '), fill: 'none', stroke: 'var(--ink)', 'stroke-width': 1.8 }, gF);
+      if (st.matched) {
         for (let i = 0; i < n; i++) {
           const a = fixedPts[i], b = fixedPts[(i + 1) % n];
-          mk('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: G.COL((i % 3) + 1), 'stroke-width': 4, 'stroke-linecap': 'round' }, gC);
+          mk('line', { x1: f2(a[0]), y1: f2(a[1]), x2: f2(b[0]), y2: f2(b[1]), stroke: sideCol(i), 'stroke-width': 4, 'stroke-linecap': 'round' }, gC);
         }
       }
-      mk('polygon', { points: fixedPts.map(p => p.map(f2).join(',')).join(' '), fill: 'none', stroke: 'var(--ink)', 'stroke-width': 1.8 }, gF);
       fixedPts.forEach((p, i) => {
         const q = V.add(p, V.mul(V.unit(V.sub(p, fixedC)), st.done ? 24 : 13));
         mk('text', { x: f2(q[0]), y: f2(q[1]), class: 'lbl' }, gT).textContent = L1[i];
       });
-      // moving shape
-      const wp = world();
-      const poly = mk('polygon', { points: wp.map(p => p.map(f2).join(',')).join(' '), fill: 'var(--blue)', 'fill-opacity': 0.18, stroke: 'var(--blue)', 'stroke-width': 2, style: 'cursor:grab' }, gM);
-      const mc = G.centroid(wp);
-      wp.forEach((p, i) => {
-        const q = V.add(p, V.mul(V.unit(V.sub(p, mc)), 13));
-        mk('text', { x: f2(q[0]), y: f2(q[1]), class: 'lbl', fill: 'var(--blue)', style: 'fill:var(--blue)' }, gT).textContent = L2[i];
+      // moving shape (drawn on top so it can always be grabbed)
+      const poly = mk('polygon', { fill: 'var(--blue)', 'fill-opacity': 0.18, stroke: st.matched ? 'none' : 'var(--blue)', 'stroke-width': 2, style: 'cursor:grab' }, gM);
+      const mLines = st.matched ? [...Array(n)].map((_, i) => mk('line', { stroke: sideCol(i), 'stroke-width': 3, 'stroke-linecap': 'round', 'pointer-events': 'none' }, gM)) : [];
+      const mLabels = [...Array(n)].map((_, i) => {
+        const t = mk('text', { class: 'lbl', fill: 'var(--blue)', style: 'fill:var(--blue)' }, gT);
+        t.textContent = L2[i];
+        return t;
       });
+      const place = () => {
+        const wp = world(), mc = G.centroid(wp);
+        poly.setAttribute('points', wp.map(p => p.map(f2).join(',')).join(' '));
+        mLines.forEach((l, i) => {
+          const a = wp[i], b = wp[(i + 1) % n];
+          l.setAttribute('x1', f2(a[0])); l.setAttribute('y1', f2(a[1])); l.setAttribute('x2', f2(b[0])); l.setAttribute('y2', f2(b[1]));
+        });
+        mLabels.forEach((t, i) => {
+          const r = V.add(wp[i], V.mul(V.unit(V.sub(wp[i], mc)), 13));
+          t.setAttribute('x', f2(r[0])); t.setAttribute('y', f2(r[1]));
+        });
+      };
+      place();
       let drag = null;
       poly.addEventListener('pointerdown', e => {
-        if (st.done) return;
-        drag = { start: svgPoint(svg, e), pos: st.pos.slice() };
+        drag = { start: svgPoint(svg, e), pos: st.pos.slice(), wasDone: st.done };
         poly.setPointerCapture(e.pointerId);
       });
       poly.addEventListener('pointermove', e => {
         if (!drag) return;
         const p = svgPoint(svg, e);
-        st.pos = [Math.max(10, Math.min(W - 10, drag.pos[0] + p[0] - drag.start[0])), Math.max(10, Math.min(H - 10, drag.pos[1] + p[1] - drag.start[1]))];
-        poly.setAttribute('points', world().map(q => q.map(f2).join(',')).join(' '));
-        const m2 = G.centroid(world());
-        gT.querySelectorAll('text').forEach((t, i) => {
-          if (i < n) return;
-          const q = world()[i - n];
-          const r = V.add(q, V.mul(V.unit(V.sub(q, m2)), 13));
-          t.setAttribute('x', f2(r[0])); t.setAttribute('y', f2(r[1]));
-        });
+        st.pos = [drag.pos[0] + p[0] - drag.start[0], drag.pos[1] + p[1] - drag.start[1]];
+        // keep the whole shape (and its labels) inside the picture
+        const wp = world(), m = 16;
+        const xs = wp.map(q => q[0]), ys = wp.map(q => q[1]);
+        st.pos[0] += Math.max(0, m - Math.min(...xs)) - Math.max(0, Math.max(...xs) - (W - m));
+        st.pos[1] += Math.max(0, m - Math.min(...ys)) - Math.max(0, Math.max(...ys) - (H - m));
+        if (st.done && V.dist(st.pos, fixedC) > 4) { st.done = false; updateStatus(); }
+        place();
       });
-      const end = () => { if (drag) { drag = null; testFit(); } };
+      const end = () => {
+        if (!drag) return;
+        const pulledApart = drag.wasDone && V.dist(st.pos, fixedC) > 4;
+        drag = null;
+        if (pulledApart) { st.done = false; draw(); } else testFit();
+      };
       poly.addEventListener('pointerup', end);
       poly.addEventListener('pointercancel', end);
       updateStatus();
     }
     function testFit() {
       const angOk = ((st.ang % 360) + 360) % 360 === 0;
-      if (!st.flip && angOk && V.dist(st.pos, fixedC) < 38) { st.pos = fixedC.slice(); st.done = true; }
+      st.done = !st.flip && angOk && V.dist(st.pos, fixedC) < 38;
+      if (st.done) { st.pos = fixedC.slice(); st.matched = true; }
       draw();
     }
     function updateStatus() {
       const n = base.length;
+      const pairs = [...L1].map((c, i) => c + ' ↔ ' + L2[i]).join(', ');
+      const sym = n === 3 ? '\\triangle ' : '';
       if (st.done) {
-        const pairs = [...L1].map((c, i) => c + ' ↔ ' + L2[i]).join(', ');
-        const sym = n === 3 ? '\\triangle ' : '';
         status.className = 'status good';
-        status.innerHTML = TEX.render(`They fit exactly, so they are congruent: $${sym}${L1} \\cong ${sym}${L2}$.<br>Corresponding vertices: ${pairs}. Matching sides are shown in the same colour.`);
+        status.innerHTML = TEX.render(`They fit exactly, so they are congruent: $${sym}${L1} \\cong ${sym}${L2}$.<br>Corresponding vertices: ${pairs}. Matching sides are shown in the same colour. Drag the blue shape away to compare them side by side.`);
+      } else if (st.matched) {
+        status.className = 'status good';
+        status.innerHTML = TEX.render(`$${sym}${L1} \\cong ${sym}${L2}$ — ${pairs}.<br>Matching sides keep the same colour, wherever you move, turn or flip the blue shape. Drag it back to make them fit again.`);
       } else {
         status.className = 'status';
         const angOk = ((st.ang % 360) + 360) % 360 === 0;
@@ -105,7 +127,7 @@ const DEMO = (() => {
         status.innerHTML = hint;
       }
     }
-    const btn = (t, f, aria) => U.el('button', { type: 'button', class: 'btn ghost small', text: t, 'aria-label': aria || t, onclick: () => { if (!st.done || t === 'New shapes') { f(); testFit(); } } });
+    const btn = (t, f, aria) => U.el('button', { type: 'button', class: 'btn ghost small', text: t, 'aria-label': aria || t, onclick: () => { f(); testFit(); } });
     box.append(U.el('div', { class: 'btn-row' },
       btn('↺ Turn', () => { st.ang -= 15; }, 'Turn anticlockwise 15 degrees'),
       btn('↻ Turn', () => { st.ang += 15; }, 'Turn clockwise 15 degrees'),
