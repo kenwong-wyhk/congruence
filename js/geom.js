@@ -214,6 +214,18 @@ const G = (() => {
         mk('path', { d: s.d, class: 'mark', stroke: col(n), 'stroke-width': 1.6 }, gMark);
       }
     }
+    // classic single arc for every angle that has a value or letter written in it
+    // (skipped if the angle already has equal-angle marks or a right-angle square; turn off with noAutoArc)
+    if (!spec.noAutoArc) {
+      const has = (obj, k) => obj && (k in obj || (k[2] + k[1] + k[0]) in obj);
+      const rightSet = new Set((spec.rights || []).map(angKey));
+      for (const k in spec.at || {}) {
+        if (has(spec.arcs, k) || rightSet.has(angKey(k))) continue;
+        const A = pts[k[0]], B = pts[k[1]], C = pts[k[2]];
+        if (!A || !B || !C) continue;
+        mk('path', { d: sectorPath(B, A, C, arcR).d, class: 'mark', stroke: 'var(--ink)', 'stroke-width': 1.3 }, gMark);
+      }
+    }
     // right-angle marks
     (spec.rights || []).forEach(k => {
       const A = pts[k[0]], B = pts[k[1]], C = pts[k[2]];
@@ -253,6 +265,9 @@ const G = (() => {
       let r = arcR + (n - 1) * 4 + 12;
       if (half < 0.4) r = Math.min(r / Math.sin(half) * 0.45, 70);
       if (spec.atPos && spec.atPos[k]) r = spec.atPos[k];
+      // keep the whole label clear of its arc (wide labels such as 106° need more room)
+      const t = spec.at[k], halfDiag = Math.hypot(t.length * 3.4, 7);
+      r = Math.max(r, arcR + (n - 1) * 4 + 3 + halfDiag);
       const pos = V.add(B, V.mul(bis, r));
       mk('text', { x: f2(pos[0]), y: f2(pos[1]), class: 'txt' + (isVar(spec.at[k]) ? ' var' : '') }, gTxt).textContent = spec.at[k];
     }

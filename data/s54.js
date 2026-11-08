@@ -63,7 +63,7 @@
       {
         level: 1,
         q: 'In the figure, the two quadrilaterals are congruent. Find $BC$ and $\\angle BCD$.',
-        fig: { w: 340, h: 180, make: [{ tri: 'ABCD', shape: Q2, box: [5, 20, 130, 130] }], derive: [{ src: 'ABCD', dst: 'PSRQ', flip: true, rot: 15, at: [285, 90] }], polys: ['ABCD', 'PQRS'], at: { DAB: '65°', CDA: '126°', SPQ: '65°', PQR: '126°', QRS: '102°', RSP: '67°' }, arcR: 13, st: { SR: '7 cm', PS: '11 cm' } },
+        fig: { w: 400, h: 200, make: [{ tri: 'ABCD', shape: Q2, box: [5, 20, 170, 150] }], derive: [{ src: 'ABCD', dst: 'PSRQ', flip: true, rot: 15, at: [325, 100] }], polys: ['ABCD', 'PQRS'], at: { DAB: '65°', CDA: '126°', SPQ: '65°', PQR: '126°', QRS: '102°', RSP: '67°' }, arcR: 13, st: { SR: '7 cm', PS: '11 cm' } },
         tip: 'Find two pairs of matching angles: $\\angle DAB = \\angle SPQ = 65^\\circ$ and $\\angle CDA = \\angle PQR = 126^\\circ$. So $A \\leftrightarrow P$ and $D \\leftrightarrow Q$.',
         steps: [
           { t: 'By inspection, $A$, $B$, $C$, $D$ correspond to $P$, $S$, $R$, $Q$ respectively.', hl: [['DAB', 'SPQ', 1], ['CDA', 'PQR', 2]] },
@@ -122,7 +122,7 @@
       {
         id: '54-4', level: 2,
         q: 'In the figure, the two quadrilaterals are congruent. Find $\\angle SPQ$.',
-        fig: { w: 340, h: 190, make: [{ tri: 'CDAB', shape: QP4, box: [10, 15, 150, 160] }], derive: [{ src: 'CDAB', dst: 'PQRS', flip: true, rot: 160, at: [255, 95] }], polys: ['ABCD', 'PQRS'], at: { ADC: '128°', DAB: '72°', ABC: '64°', PQR: '128°' }, atPos: { DAB: 24, ADC: 18 }, st: { AD: '6 cm', DC: '10 cm', PQ: '10 cm', QR: '6 cm' }, arcR: 13 },
+        fig: { w: 400, h: 210, make: [{ tri: 'CDAB', shape: QP4, box: [10, 15, 185, 180] }], derive: [{ src: 'CDAB', dst: 'PQRS', flip: true, rot: 160, at: [305, 105] }], polys: ['ABCD', 'PQRS'], at: { ADC: '128°', DAB: '72°', ABC: '64°', PQR: '128°' }, atPos: { DAB: 24, ADC: 18 }, st: { AD: '6 cm', DC: '10 cm', PQ: '10 cm', QR: '6 cm' }, arcR: 13 },
         lines: ['$\\angle SPQ = $ [[num:96]]°'],
         wrongs: [{ tok: 0, val: 72, hint: 'Match first: the 128° angles give D ↔ Q; the 6 cm sides give A ↔ R; the 10 cm sides give C ↔ P. So ∠SPQ = ∠BCD, not ∠DAB.', trap: 'position' }, { tok: 0, val: 64, hint: 'Match first: D ↔ Q (128°), A ↔ R (6 cm side), C ↔ P (10 cm side). So ∠SPQ = ∠BCD.' }],
         hints: ['Start from the 128° angles: D ↔ Q. Then use the 6 cm and 10 cm sides next to them.', '∠SPQ matches ∠BCD. Find ∠BCD with the angle sum of a quadrilateral (360°).'],

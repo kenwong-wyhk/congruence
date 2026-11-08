@@ -118,6 +118,8 @@ check them in the preview, then publish. Nothing is generated while students use
 4. After a minute the site is live at `https://<your-username>.github.io/congruence/`. Post that link on Google Classroom.
 
 To update the site later, upload the changed files again (or push with git). Students' progress is not affected.
+When you change any file in `js/`, `data/` or `css/`, also raise the version number in `index.html`
+(e.g. every `?v=4` becomes `?v=5`) so students' browsers fetch the new files instead of an old cached copy.
 
 ## Notes
 
