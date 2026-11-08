@@ -331,3 +331,19 @@ input[type=range] { width: 100%; accent-color: var(--blue); min-height: 36px; }
   h1 { font-size: 34px; }
   main { padding-top: 28px; }
 }
+
+/* revision sheet + printing */
+.sheet h2 { font-size: 20px; margin: 18px 0 6px; }
+.sheet .key { margin: 8px 0; }
+.sheet table.plain { font-size: 14px; }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  .site-head, .cross-rule, .site-foot, .no-print, .tabs { display: none !important; }
+  body { font-size: 11pt; color: #000; }
+  main { max-width: none; padding: 0; }
+  h1 { font-size: 20pt; margin: 0 0 6px; }
+  .sheet h2 { font-size: 13pt; margin: 10px 0 4px; break-after: avoid; }
+  .key { background: none; border: 1px solid var(--blue); padding: 6px 10px; break-inside: avoid; }
+  table.plain { font-size: 9.5pt; break-inside: avoid; }
+  table.plain th { background: none; }
+}

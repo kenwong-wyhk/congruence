@@ -44,6 +44,7 @@ const QR = (() => {
     const api = {
       node,
       get() { const v = slots.map(s => s.textContent || ' '); return [v.slice(0, n).join(''), v.slice(n).join('')]; },
+      set(lr) { const v = ((lr && lr[0]) || '') + ((lr && lr[1]) || ''); slots.forEach((s, i) => { s.textContent = (v[i] || '').trim(); }); },
       mark(ok) { line.classList.toggle('ok', ok === true); line.classList.toggle('bad', ok === false); },
       onChange: null,
     };
@@ -53,12 +54,16 @@ const QR = (() => {
   /* ---------- blanks ---------- */
   function makeInput(kind, raw, ctx) {
     const alts = raw.split('|');
+    // choice blanks mark the right option with * before or after it: [[choice:Yes*|No]] or [[choice:*Yes|No]]
+    const starred = a => /^\*|\*$/.test(a);
+    const clean = a => a.replace(/^\*|\*$/g, '');
+    const rightChoices = alts.filter(starred).map(clean);
     let el;
     if (kind === 'reason' || kind === 'cond' || kind === 'choice') {
       let opts;
       if (kind === 'reason') opts = uniq([...REASONS, ...(ctx.reasons || [])]);
       else if (kind === 'cond') opts = CONDS;
-      else opts = alts.map(a => a.replace(/^\*/, ''));
+      else opts = alts.map(clean);
       el = U.el('select', { class: 'ans', 'aria-label': kind },
         U.el('option', { value: '', text: kind === 'reason' ? '— reason —' : '— choose —' }),
         opts.map(o => U.el('option', { value: o, text: o })));
@@ -81,14 +86,14 @@ const QR = (() => {
       check() {
         const v = el.value;
         if (kind === 'reason' || kind === 'cond') { if (!v) return { ok: false, empty: true }; return { ok: alts.includes(v), val: v }; }
-        if (kind === 'choice') { if (!v) return { ok: false, empty: true }; return { ok: alts.filter(a => a.startsWith('*')).map(a => a.slice(1)).includes(v), val: v }; }
+        if (kind === 'choice') { if (!v) return { ok: false, empty: true }; return { ok: rightChoices.includes(v), val: v }; }
         const a = alts.join('/');
         const r = kind === 'num' ? CK.num(v, a) : kind === 'side' ? CK.side(v, a) : kind === 'angle' ? CK.angle(v, a) : kind === 'tri' ? CK.tri(v, a) : CK.text(v, raw);
         if (r.val == null) r.val = CK.norm(v);
         return r;
       },
       answerText() {
-        if (kind === 'choice') return alts.filter(a => a.startsWith('*')).map(a => a.slice(1))[0];
+        if (kind === 'choice') return rightChoices[0];
         if (kind === 'angle') return '∠' + alts[0];
         if (kind === 'tri') return '△' + alts[0];
         return alts[0];
@@ -193,6 +198,8 @@ const QR = (() => {
         return { ok, empty, hint, trap };
       },
       reveal() { toks.forEach(t => { if (!t.check().ok) { t.el.classList.add('bad'); t.el.title = 'Answer: ' + t.answerText(); } }); },
+      state() { return toks.map(t => t.el.value); },
+      restore(s) { s.forEach((v, i) => { if (toks[i]) toks[i].el.value = v; }); },
     };
   };
 
@@ -219,12 +226,16 @@ const QR = (() => {
         return { ok, hint: ok ? null : (part.why || {})[sel] || null, trap: ok ? null : (part.whyTrap || {})[sel] || null };
       },
       reveal() { btns[part.ans].classList.add('right'); },
+      state() { return sel; },
+      restore(s) { if (s != null && btns[s]) btns[s].click(); },
     };
   };
 
   BODY.statement = (part, ctx) => {
-    const letters = part.letters ? [...part.letters] : uniq([...part.tri1, ...part.tri2]).sort();
-    const sb = StatementBuilder(letters, part.tri1.length);
+    // part.pairs lists every correct answer when more than one pair works: [['ABD','CBD'], ['ADE','CDE']]
+    const pairs = part.pairs || [[part.tri1, part.tri2]];
+    const letters = part.letters ? [...part.letters] : uniq(pairs.flat().join('')).sort();
+    const sb = StatementBuilder(letters, pairs[0][0].length);
     const node = U.el('div', {}, part.prompt ? U.el('p', { html: TEX.render(part.prompt) }) : '', sb.node);
     sb.onChange = () => sb.mark(null);
     return {
@@ -232,11 +243,14 @@ const QR = (() => {
       eval() {
         const [L, R] = sb.get();
         if ((L + R).includes(' ')) return { ok: false, empty: true };
-        const r = CK.statement(L, R, part.tri1, part.tri2);
+        const results = pairs.map(([a, b]) => CK.statement(L, R, a, b));
+        const r = results.find(x => x.ok) || results.find(x => x.trap) || results[0];
         sb.mark(r.ok);
         return r;
       },
       reveal() {},
+      state() { return sb.get(); },
+      restore(s) { sb.set(s); },
     };
   };
 
@@ -348,6 +362,16 @@ const QR = (() => {
         return { ok, hint, trap };
       },
       reveal() {},
+      state() { return { rows: rows.map(r => [r.s, r.sel.value]), cond: cond.value }; },
+      restore(s) {
+        (s.rows || []).forEach(([st, rs], i) => {
+          if (!rows[i]) return;
+          if (st && chips[st] && !rows[i].s) { rows[i].s = st; chips[st].classList.add('hidden'); }
+          rows[i].sel.value = rs || '';
+        });
+        cond.value = s.cond || '';
+        paint();
+      },
     };
   };
 
@@ -413,8 +437,8 @@ const QR = (() => {
     }
     const fb = U.el('div', { class: 'feedback', 'aria-live': 'polite' });
     const solBox = U.el('div', { class: 'solution' }, solutionNode(q.sol, 'Solution'), q.alt ? U.el('div', { class: 'alt' }, solutionNode(q.alt, 'Another way')) : '');
-    let attempts = 0, solved = false;
-    const solBtn = U.el('button', { type: 'button', class: 'btn ghost hidden', text: 'Show solution', onclick: () => { solBox.classList.add('show'); bodies.forEach(b => b.reveal()); solBtn.classList.add('hidden'); } });
+    let attempts = 0, solved = false, peeked = false;
+    const solBtn = U.el('button', { type: 'button', class: 'btn ghost hidden', text: 'Show solution', onclick: () => { peeked = true; solBox.classList.add('show'); bodies.forEach(b => b.reveal()); solBtn.classList.add('hidden'); } });
     const showFb = (good, title, msg, trap) => {
       fb.className = 'feedback show ' + (good ? 'good' : 'bad');
       U.clear(fb).append(U.el('div', { class: 'fb-title', text: title }));
@@ -431,10 +455,12 @@ const QR = (() => {
         const first = attempts === 0 && !solved;
         solved = true;
         root.classList.add('ok');
-        showFb(true, first ? 'Correct — first try!' : 'Correct!', q.after || '', null);
+        const note = peeked ? 'You looked at the solution first, so this one is not counted as solved yet. Come back later and try it again without help.' : (q.after || '');
+        showFb(true, first ? 'Correct — first try!' : 'Correct!', note, null);
         solBox.classList.add('show');
         solBtn.classList.add('hidden');
-        opts.onResult && opts.onResult(true, first);
+        // first: right on the first try; earned: solved without opening the solution
+        opts.onResult && opts.onResult(true, first, !peeked);
         return;
       }
       if (r.empty && !r.first.hint) { showFb(false, 'Not finished yet', 'Answer every blank first.', null); return; }
@@ -452,8 +478,17 @@ const QR = (() => {
     actions.append(solBtn);
     if (opts.regen) actions.append(U.el('button', { type: 'button', class: 'btn ghost', text: 'New numbers', onclick: () => { const n = card(opts.regen(), opts); root.replaceWith(n.node); } }));
     root.append(actions, fb, solBox);
+    if (opts.onChange) {
+      const ping = () => setTimeout(() => opts.onChange(), 0);
+      root.addEventListener('input', ping);
+      root.addEventListener('change', ping);
+      root.addEventListener('click', ping);
+    }
     return {
       node: root,
+      // save / restore what the student has entered (used by Test mode)
+      state() { return bodies.map(b => (b.state ? b.state() : null)); },
+      restore(s) { (s || []).forEach((x, i) => { if (x != null && bodies[i] && bodies[i].restore) bodies[i].restore(x); }); },
       // for test mode: mark silently, then reveal
       grade() { const r = evaluate(); return r.ok; },
       reveal(ok) {

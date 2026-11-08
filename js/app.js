@@ -11,7 +11,7 @@
   Store.load();
 
   /* ---------- navigation ---------- */
-  const NAV = [['#/', 'Home'], ...ORDER.map(id => ['#/s/' + id, id]), ['#/game', 'Game'], ['#/traps', 'Traps'], ['#/challenge', 'Challenge']];
+  const NAV = [['#/', 'Home'], ...ORDER.map(id => ['#/s/' + id, id]), ['#/game', 'Game'], ['#/traps', 'Traps'], ['#/challenge', 'Challenge'], ['#/sheet', 'Revision sheet']];
   NAV.forEach(([h, t]) => nav.append(U.el('a', { href: h, text: t })));
   menuBtn.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
@@ -29,7 +29,8 @@
     const sec = C5.sections[id];
     if (!sec) return { x: 0, y: 0 };
     const items = practiceItems(sec);
-    return { x: items.filter(q => Store.isOk(id, q.id)).length, y: items.length };
+    // x: solved without opening the solution; f: right on the first try
+    return { x: items.filter(q => Store.isOk(id, q.id)).length, f: items.filter(q => Store.isFirst(id, q.id)).length, y: items.length };
   }
   function resolveQ(q) {
     if (q.gen) {
@@ -98,7 +99,7 @@
         U.el('div', { class: 'ttl', text: s.title }),
         U.el('div', { class: 'meta', html: TEX.render(s.blurb || '') }),
         s.noTest ? U.el('div', { class: 'small' }, U.el('span', { class: 'badge', text: 'Not in test/exam' })) : '',
-        p.y ? U.el('div', { class: 'meta', text: `${p.x}/${p.y} practice correct` }) : '',
+        p.y ? U.el('div', { class: 'meta', text: `${p.x}/${p.y} practice solved · ${p.f} first try` }) : '',
         p.y ? U.el('div', { class: 'bar' }, U.el('span', { style: `width:${pct}%` })) : ''));
     });
     const gs = Store.game();
@@ -108,8 +109,21 @@
       U.el('a', { class: 'card extra', href: '#/traps' }, U.el('div', { class: 'num', text: 'Avoid mistakes' }), U.el('div', { class: 'ttl', text: 'Trap Gallery' }),
         U.el('div', { class: 'meta', text: 'The most common mistakes in this chapter, and how to avoid them.' })),
       U.el('a', { class: 'card extra', href: '#/challenge' }, U.el('div', { class: 'num', text: 'Revision' }), U.el('div', { class: 'ttl', text: 'Mixed Challenge' }),
-        U.el('div', { class: 'meta', text: '10 mixed questions from 5.1–5.4, with an optional 35-minute test mode.' })));
+        U.el('div', { class: 'meta', text: '10 mixed questions from 5.1–5.4, with an optional 35-minute test mode.' })),
+      U.el('a', { class: 'card extra', href: '#/sheet' }, U.el('div', { class: 'num', text: 'Revision' }), U.el('div', { class: 'ttl', text: 'Revision Sheet' }),
+        U.el('div', { class: 'meta', text: 'All the key points, conditions and reasons on one printable page.' })));
     app.append(cards);
+  }
+
+  function sheet() {
+    app.append(U.el('div', { class: 'crumbs no-print' }, U.el('a', { href: '#/', text: 'Home' }), ' / Revision Sheet'));
+    app.append(U.el('h1', { text: 'Ch5 Congruence — Revision Sheet' }));
+    app.append(U.el('div', { class: 'btn-row no-print' },
+      U.el('button', { type: 'button', class: 'btn', text: 'Print / save as PDF', onclick: () => window.print() }),
+      U.el('span', { class: 'small muted', text: 'Fits on about two A4 pages.' })));
+    const wrap = U.el('div', { class: 'sheet' });
+    (C5.sheet || []).forEach(b => wrap.append(block(b)));
+    app.append(wrap);
   }
 
   function section(id, tab) {
@@ -122,7 +136,7 @@
     app.append(U.el('h1', { text: id + ' ' + s.title }));
     if (s.noTest) app.append(U.el('div', { class: 'note', text: s.noTestNote || 'Not in the test or exam. It is here to show how these drawings work — enjoy!' }));
     const p = progress(id);
-    if (p.y) app.append(U.el('div', { class: 'small muted', text: `${p.x}/${p.y} practice questions correct on this device` }));
+    if (p.y) app.append(U.el('div', { class: 'small muted', text: `${p.x}/${p.y} practice questions solved (${p.f} on the first try) on this device` }));
     if (tabs.length > 1) {
       const tb = U.el('nav', { class: 'tabs', 'aria-label': 'Section tabs' });
       TABS.filter(t => tabs.includes(t[0])).forEach(([k, label]) => tb.append(U.el('a', { href: `#/s/${id}/${k}`, text: label, 'aria-current': k === tab ? 'page' : null })));
@@ -134,15 +148,18 @@
       (s.examples || []).forEach((ex, i) => app.append(EX.render(ex, i + 1)));
     }
     if (tab === 'practice') {
-      app.append(U.el('p', { class: 'muted small', html: 'Check your answer. The first wrong try gives a hint; after two tries you can see the solution. Write angles in full, e.g. ∠ABC.' }));
+      app.append(U.el('p', { class: 'muted small', html: 'Check your answer. The first wrong try gives a hint; after two tries you can see the solution. A question only counts as solved if you get it right <b>without</b> opening the solution. Write angles in full, e.g. ∠ABC.' }));
       const items = practiceItems(s);
       const head = U.el('div', { class: 'small', style: 'font-weight:500;color:var(--blue)' });
-      const upd = () => { const pp = progress(id); head.textContent = `${pp.x}/${pp.y} correct`; };
+      const upd = () => { const pp = progress(id); head.textContent = `${pp.x}/${pp.y} solved · ${pp.f} first try`; };
       upd();
       app.append(head);
       items.forEach((item, i) => {
         const { q, regen } = resolveQ(item);
-        const c = QR.card(q, { num: i + 1, done: Store.isOk(id, item.id), regen, onResult: ok => { if (ok) { Store.ok(id, item.id); upd(); } } });
+        const c = QR.card(q, {
+          num: i + 1, done: Store.isOk(id, item.id), regen,
+          onResult: (ok, first, earned) => { if (ok && earned) Store.ok(id, item.id); if (ok && first) Store.first(id, item.id); upd(); },
+        });
         app.append(c.node);
       });
     }
@@ -183,18 +200,33 @@
   function challenge() {
     app.append(U.el('div', { class: 'crumbs' }, U.el('a', { href: '#/', text: 'Home' }), ' / Mixed Challenge'));
     app.append(U.el('h1', { text: 'Mixed Challenge' }));
-    app.append(U.el('p', { text: '10 questions drawn at random from Sections 5.1–5.4. Choose how you want to do them.' }));
+    app.append(U.el('p', { text: `10 questions drawn at random from a pool of ${C5.challenge.length} (Sections 5.1–5.4). Choose how you want to do them.` }));
     const area = U.el('div');
-    app.append(U.el('div', { class: 'btn-row' },
+    const resumeBox = U.el('div');
+    const fmt = s => Math.floor(s / 60) + ':' + String(Math.max(0, s) % 60).padStart(2, '0');
+    app.append(resumeBox, U.el('div', { class: 'btn-row' },
       U.el('button', { type: 'button', class: 'btn', text: 'Practice mode (untimed)', onclick: () => start(false) }),
       U.el('button', { type: 'button', class: 'btn ghost', text: 'Test mode (35 min)', onclick: () => start(true) })),
-      U.el('p', { class: 'small muted', text: 'Practice mode: check each answer as you go, with hints. Test mode: no hints, marks shown at the end — like a real test.' }), area);
+      U.el('p', { class: 'small muted', text: 'Practice mode: check each answer as you go, with hints. Test mode: no hints, marks shown at the end — like a real test. Your test answers and the time are saved on this device, so a refresh will not lose them.' }), area);
     let timer = null;
     cleanup = () => { if (timer) clearInterval(timer); };
-    function start(test) {
+    const saved = Store.getTest();
+    if (saved) {
+      const left = Math.round((saved.ends - Date.now()) / 1000);
+      resumeBox.append(U.el('div', { class: 'tip' },
+        U.el('div', { class: 'tip-title', text: 'You have a test in progress' }),
+        U.el('p', { text: left > 0 ? `${fmt(left)} left. Your answers so far are saved.` : 'The time is up. You can still see your mark.' }),
+        U.el('div', { class: 'btn-row' },
+          U.el('button', { type: 'button', class: 'btn', text: left > 0 ? 'Resume the test' : 'See my mark', onclick: () => { U.clear(resumeBox); start(true, saved); } }),
+          U.el('button', { type: 'button', class: 'btn ghost', text: 'Discard it', onclick: () => { if (confirm('Discard your saved test?')) { Store.setTest(null); U.clear(resumeBox); } } }))));
+    }
+    function start(test, resume) {
+      if (test && !resume && Store.getTest() && !confirm('Start a new test? Your saved test will be discarded.')) return;
       if (timer) clearInterval(timer);
-      U.clear(area);
-      const pool = U.shuffle(C5.challenge).slice(0, 10);
+      U.clear(area); U.clear(resumeBox);
+      const qs = resume ? resume.qs : U.shuffle(C5.challenge).slice(0, 10).map(item => resolveQ(item).q);
+      const run = test ? (resume || { qs, ends: Date.now() + 35 * 60 * 1000, states: [] }) : null;
+      if (test) Store.setTest(run);
       const cards = [];
       let score = 0;
       const scoreEl = U.el('div', { class: 'stats' });
@@ -202,22 +234,27 @@
         area.append(scoreEl);
         scoreEl.textContent = 'Score: 0/10 (first try)';
       }
-      pool.forEach((item, i) => {
-        const { q } = resolveQ(item);
-        const c = QR.card(q, { num: i + 1, deferred: test, onResult: (ok, first) => { if (ok && first) { score++; scoreEl.textContent = `Score: ${score}/10 (first try)`; } } });
+      qs.forEach((q, i) => {
+        const c = QR.card(q, {
+          num: i + 1, deferred: test,
+          onResult: (ok, first) => { if (ok && first) { score++; scoreEl.textContent = `Score: ${score}/10 (first try)`; } },
+          onChange: test ? () => { if (!run.done) { run.states[i] = cards[i].state(); Store.setTest(run); } } : null,
+        });
         cards.push(c);
         area.append(c.node);
+        if (test && run.states[i]) c.restore(run.states[i]);
       });
       if (test) {
-        let left = 35 * 60;
         const tEl = U.el('span', { class: 'timer' });
         const finish = U.el('button', { type: 'button', class: 'btn', text: 'Finish and mark' });
         const bar = U.el('div', { class: 'timer-bar' }, tEl, finish);
         area.prepend(bar);
-        const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-        tEl.textContent = fmt(left);
+        const secsLeft = () => Math.round((run.ends - Date.now()) / 1000);
+        tEl.textContent = fmt(secsLeft());
         const mark = () => {
           clearInterval(timer); timer = null;
+          run.done = true;
+          Store.setTest(null);
           let total = 0;
           cards.forEach(c => { const ok = c.grade(); if (ok) total++; c.reveal(ok); });
           finish.disabled = true;
@@ -226,7 +263,8 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         finish.addEventListener('click', () => { if (confirm('Finish now and see your mark?')) mark(); });
-        timer = setInterval(() => { left--; tEl.textContent = fmt(left); if (left <= 0) mark(); }, 1000);
+        if (secsLeft() <= 0) { mark(); return; }
+        timer = setInterval(() => { const l = secsLeft(); tEl.textContent = fmt(l); if (l <= 0) mark(); }, 1000);
       }
     }
   }
@@ -249,6 +287,7 @@
     else if (parts[0] === 'game') { game(); current = '#/game'; }
     else if (parts[0] === 'traps') { traps(parts[1]); current = '#/traps'; }
     else if (parts[0] === 'challenge') { challenge(); current = '#/challenge'; }
+    else if (parts[0] === 'sheet') { sheet(); current = '#/sheet'; }
     else notFound();
     nav.querySelectorAll('a').forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === current ? 'page' : 'false'));
     const sec = parts[0] === 's' ? C5.sections[parts[1]] : null;

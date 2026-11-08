@@ -164,6 +164,11 @@ const G = (() => {
       for (let x = 0; x <= w; x += spec.grid) mk('line', { x1: x, y1: 0, x2: x, y2: h, class: 'grid' }, gGrid);
       for (let y = 0; y <= h; y += spec.grid) mk('line', { x1: 0, y1: y, x2: w, y2: y, class: 'grid' }, gGrid);
     }
+    // free-form (curved) outlines: shapes: [{ d:'svg path around (0,0)', at:[x,y], rot, flip, scale, sx }]
+    (spec.shapes || []).forEach(s => {
+      const tf = `translate(${s.at[0]} ${s.at[1]}) rotate(${s.rot || 0}) scale(${(s.flip ? -1 : 1) * (s.scale || 1) * (s.sx || 1)} ${s.scale || 1})`;
+      mk('path', { d: s.d, transform: tf, fill: 'var(--blue-tint)', stroke: 'var(--ink)', 'stroke-width': 1.6, 'vector-effect': 'non-scaling-stroke' }, gGrid);
+    });
     const segs = new Map(), nb = {};
     const addSeg = (a, b) => {
       if (!pts[a] || !pts[b]) return;

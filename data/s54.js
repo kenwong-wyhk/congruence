@@ -11,6 +11,29 @@
   const QP5a = [[0, 0], [3, 0], [1.19, -6.76], [-1.05, -2.88]];            // 110, 75, 45, 130
   const QP5b = [[0, 0], [3.5, 0], [1.17, -8.69], [-2.28, -2.72]];          // 130, 75, 45, 110
 
+  const PENT = [[0, 0], [5.5, 0], [6.37, -4.92], [3.15, -8.75], [-1.48, -5.51]];     // 105, 100, 130, 95, 110
+  // two quadrilaterals on the straight line CDHG: ABCH ≅ EFGD (half-turn), angles C58 H122 A100 B80
+  const PARQ = { C: [0, 0], H: [0, -3.5], A: [-2.54, -5.09], B: [-4.56, -2.85], G: [0, -4.025], D: [0, -0.525], E: [2.54, 1.065], F: [4.56, -1.175] };
+
+  // curved outlines, drawn around (0,0)
+  const DSHAPE = 'M -28 -26 L 28 -26 L 28 0 A 28 28 0 0 1 -28 0 Z';
+  const DROP = 'M 0 -34 C 22 -10 28 12 2 28 C -26 14 -14 -8 0 -34 Z';
+  const QUARTER = 'M -20 20 L 20 20 A 40 40 0 0 0 -20 -20 Z';
+  const LEAF = 'M -30 10 C -20 -25 20 -25 30 10 C 10 0 -10 0 -30 10 Z';
+  function curvedFig() {
+    const row = (y, tag, a, b) => [{ d: a.d, at: [95, y], rot: a.rot, flip: a.flip, scale: a.scale, sx: a.sx }, { d: b.d, at: [235, y], rot: b.rot, flip: b.flip, scale: b.scale, sx: b.sx }];
+    return {
+      w: 320, h: 360, fit: false, noLabels: true, pts: {},
+      shapes: [
+        ...row(45, '(a)', { d: DSHAPE }, { d: DSHAPE, rot: 90 }),
+        ...row(130, '(b)', { d: DROP }, { d: DROP, flip: true, rot: 30 }),
+        ...row(220, '(c)', { d: QUARTER }, { d: QUARTER, rot: 180, scale: 1.2 }),
+        ...row(305, '(d)', { d: LEAF }, { d: LEAF, rot: -20, sx: 1.25 }),
+      ],
+      texts: [{ at: [22, 50], t: '(a)' }, { at: [22, 135], t: '(b)' }, { at: [22, 225], t: '(c)' }, { at: [22, 310], t: '(d)' }],
+    };
+  }
+
   // grid figures for "which are congruent?"
   function gridFig() {
     const S = 14;
@@ -40,6 +63,8 @@
       { title: 'Congruent polygons', key: 'Two polygons are congruent if<ol><li>each pair of corresponding sides are equal, and</li><li>each pair of corresponding angles are equal.</li></ol>If $ABCD \\cong PQRS$, then<br>$AB = PQ$, $BC = QR$, $CD = RS$, $DA = SP$, and<br>$\\angle DAB = \\angle SPQ$, $\\angle ABC = \\angle PQR$, $\\angle BCD = \\angle QRS$, $\\angle CDA = \\angle RSP$.',
         fig: { w: 340, h: 170, make: [{ tri: 'ABCD', shape: Q1, box: [15, 20, 140, 130] }], derive: [{ src: 'ABCD', dst: 'PQRS', shift: [175, 0] }], polys: ['ABCD', 'PQRS'], ticks: { AB: 1, PQ: 1, BC: 2, QR: 2, CD: 3, RS: 3 }, arcs: { DAB: 1, SPQ: 1, ABC: 2, PQR: 2, BCD: 3, QRS: 3 } } },
       { tip: 'In a polygon, the full name of an angle uses the two neighbouring vertices: the angle at A in $ABCD$ is $\\angle DAB$ (or $\\angle BAD$).', title: 'Full angle names in polygons' },
+      { title: 'Angle sum of a polygon', key: 'The interior angles of an $n$-sided polygon add up to $(n - 2) \\times 180^\\circ$ &nbsp;[reason: <b>∠ sum of polygon</b>].<br>Quadrilateral: $360^\\circ$. Pentagon: $540^\\circ$. Hexagon: $720^\\circ$.<br>Use it to find the one angle that is not marked, then use the correspondence.' },
+      { title: 'Curved figures can be congruent too', key: 'Congruence is not only for polygons. Two figures with curved edges are congruent if one can be moved (slid, turned or flipped) to fit <b>exactly</b> on the other. In pair (b) below, the second shape is flipped and turned — still congruent.', fig: Object.assign(curvedFig(), { h: 175, shapes: curvedFig().shapes.slice(0, 4), texts: curvedFig().texts.slice(0, 2) }) },
       { title: 'Always congruent if…', key: '<ul><li>two <b>circles</b> have equal radii (or equal areas, or equal circumferences);</li><li>two <b>squares</b> have equal sides (or equal areas, or equal perimeters);</li><li>two <b>regular polygons</b> with the same number of sides have equal sides (or equal perimeters).</li></ul>But two rectangles, or two parallelograms, with the same area are <b>not</b> necessarily congruent.' },
       { title: 'Finding the correspondence by inspection', tip: 'Look for a part that appears only once (a unique angle or side). Match it first. Then walk around both shapes in the same direction — or in opposite directions if one is flipped.' },
       { title: 'Same angles ≠ congruent', tip: 'Two quadrilaterals can have exactly the same four angles and still not be congruent, if the angles are in a different order around the shape. See Example 3.' },
@@ -155,6 +180,61 @@
         sol: ['I is the given figure turned through 90°. II is the given figure flipped over. Both are congruent.', 'III has 6 squares, so it is bigger — not congruent. The answer is <b>A</b>.'],
       },
       { id: '54-r', gen: 's54rand' },
+      {
+        id: '54-7', level: 2,
+        q: 'In the figure, the two pentagons are congruent. Find $x$ and $y$.',
+        fig: { w: 420, h: 210, make: [{ tri: 'ABCDE', shape: PENT, box: [5, 15, 165, 180] }], derive: [{ src: 'ABCDE', dst: 'RSTPQ', flip: true, rot: 70, at: [335, 105] }], polys: ['ABCDE', 'PQRST'], at: { EAB: '105°', ABC: '100°', CDE: '95°', DEA: '110°', QRS: '105°', RST: '100°', STP: 'x' }, st: { DE: '5.6 cm', PQ: 'y cm' }, arcR: 13 },
+        lines: ['$x = $ [[num:130]]°', '$y = $ [[num:5.6]]'],
+        wrongs: [{ tok: 0, val: 95, hint: 'x is at T. Match first: R ↔ A (105°), S ↔ B (100°), so T ↔ C. ∠BCD is not marked — use the angle sum.', trap: 'anglesum' }, { tok: 0, val: 110, hint: 'x is at T, which matches C. Find ∠BCD with the angle sum of a pentagon (540°).', trap: 'anglesum' }],
+        hints: ['Match the unique angles first: 105° and 100°.', 'The angles of a pentagon add up to (5 − 2) × 180° = 540°.'],
+        trap: 'anglesum',
+        sol: [{ t: 'By inspection, $A$, $B$, $C$, $D$, $E$ correspond to $R$, $S$, $T$, $P$, $Q$.' }, { s: '∠BCD = 540° − 105° − 100° − 95° − 110°', r: '∠ sum of polygon' }, { s: '= 130°' }, { s: 'x = ∠STP = ∠BCD' }, { s: '= \\underline{\\underline{130°}}' }, { s: 'y = PQ = DE' }, { s: '= \\underline{\\underline{5.6}}' }],
+      },
+      {
+        id: '54-8', level: 2,
+        q: 'In the figure, $CDHG$ is a straight line. $ABCH$ and $EFGD$ are two quadrilaterals such that $ABCH \\cong EFGD$.',
+        fig: { w: 300, h: 230, pts: PARQ, fit: true, pad: 30, polys: ['ABCH', 'EFGD'], lines: ['CDHG'], at: { BCH: '58°', EFG: '80°', DEF: '100°' }, arcR: 13, lab: { D: [12, -7], C: [-4, 14], H: [-12, 6], G: [10, -8] } },
+        reasons: ['alt. ∠s equal', 'corr. ∠s equal', '∠ sum of polygon'],
+        parts: [
+          { type: 'fill', label: '(a) Find $\\angle EDG$.', lines: ['$\\angle EDG = $ [[num:122]]°'], wrongs: [{ tok: 0, val: 58, hint: '∠EDG has vertex D, which matches H (not C). Find ∠AHC first with the angle sum of ABCH.', trap: 'position' }] },
+          {
+            type: 'fill', label: '(b) Is $BC$ parallel to $DE$? Complete the explanation.',
+            rows: [
+              { s: '∠EDC = 180° − ∠EDG', r: '[[reason:adj. ∠s on st. line]]' },
+              { s: '= 180° − 122°' }, { s: '= 58°' },
+              { s: '∴ ∠EDC = [[angle:BCD|BCH|BCG]]' },
+              { s: '∴ BC // DE', r: '[[reason:alt. ∠s equal]]' },
+            ],
+            lines: ['Is $BC \\parallel DE$? [[choice:Yes*|No]]'],
+          },
+        ],
+        hints: ['A ↔ E, B ↔ F, C ↔ G, H ↔ D. So ∠EDG = ∠AHC.', 'For (b): ∠EDC and ∠BCD are on opposite sides of the line CD — alternate angles.'],
+        trap: 'parallel',
+        sol: [
+          { t: '(a) $A$, $B$, $C$, $H$ correspond to $E$, $F$, $G$, $D$.' }, { s: '∠HAB = ∠DEF = 100°' }, { s: '∠ABC = ∠EFG = 80°' },
+          { s: '∠AHC = 360° − 100° − 80° − 58°', r: '∠ sum of polygon' }, { s: '= 122°' }, { s: '∠EDG = ∠AHC = 122°' },
+          { t: '(b)' }, { s: '∠EDC = 180° − 122°', r: 'adj. ∠s on st. line' }, { s: '= 58°' }, { s: '= ∠BCD' }, { s: '∴ BC // DE', r: 'alt. ∠s equal' }, { t: 'Yes, $BC \\parallel DE$.' },
+        ],
+      },
+      {
+        id: '54-9', level: 1,
+        q: 'In each pair, decide whether the two figures are congruent. (Each figure on the right may have been turned or flipped.)',
+        fig: curvedFig(),
+        lines: ['(a) [[choice:Congruent*|Not congruent]]', '(b) [[choice:Congruent*|Not congruent]]', '(c) [[choice:Congruent|Not congruent*]]', '(d) [[choice:Congruent|Not congruent*]]'],
+        wrongs: [{ tok: 1, val: 'Not congruent', hint: 'The second drop is flipped over and turned — flipping does not change its size or shape.', trap: 'flip' }, { tok: 2, val: 'Congruent', hint: 'Same shape, but the second quarter circle has a bigger radius. Congruent figures must be the same size too.' }, { tok: 3, val: 'Congruent', hint: 'The second leaf has been stretched sideways, so its shape is different.' }],
+        hints: ['Ask: could I slide, turn or flip one to fit exactly on the other?'],
+        trap: 'flip',
+        sol: ['(a) Turned through 90° — congruent.', '(b) Flipped over and turned — congruent.', '(c) Same shape, different size — not congruent.', '(d) Stretched — different shape, not congruent.'],
+      },
+      {
+        id: '54-10', level: 1,
+        q: 'It is given that $ABCDE \\cong VWXYZ$, $\\angle EAB = 100^\\circ$, $\\angle ABC = 120^\\circ$, $\\angle BCD = 95^\\circ$ and $\\angle CDE = 115^\\circ$. Find $\\angle YZV$.',
+        letters: 'ABCDEVWXYZ',
+        lines: ['$\\angle YZV = $ [[num:110]]°'],
+        wrongs: [{ tok: 0, val: 115, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not D.', trap: 'order' }, { tok: 0, val: 250, hint: 'A pentagon\'s angles add up to 540°, not 360°.' }],
+        hints: ['∠YZV matches ∠DEA.', 'The angles of a pentagon add up to (5 − 2) × 180° = 540°.'],
+        sol: [{ s: '∠DEA = 540° − 100° − 120° − 95° − 115°', r: '∠ sum of polygon' }, { s: '= 110°' }, { s: '∠YZV = ∠DEA' }, { s: '= \\underline{\\underline{110°}}' }],
+      },
     ],
   };
 
@@ -181,7 +261,7 @@
       const s1 = s0 * (0.6 + Math.random() * 0.6);
       shp = quadShape(ang, s0, s1);
       const sides = [s0, s1, shp.c, shp.d];
-      if (Math.min(...sides) > 0 && Math.min(...sides) / Math.max(...sides) > 0.4) break;
+      if (Math.min(...sides) > 0 && Math.min(...sides) / Math.max(...sides) > 0.6) break;
       shp = null;
     }
     if (!shp) { ang = [100, 80, 90, 90]; s0 = 6; shp = quadShape(ang, 6, 5); }
@@ -197,7 +277,7 @@
     const x = ang[3];
     return {
       q: `In the figure, $${S1} \\cong ${S2}$. Find $x$ and $y$.`,
-      fig: { w: 340, h: 190, make: [{ tri: L1, shape: shp.pts, box: [5, 20, 130, 150] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [275, 95] }], polys: [L1, L2], at, st, arcR: 13 },
+      fig: { w: 340, h: 190, make: [{ tri: L1, shape: shp.pts, box: [5, 20, 130, 150] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [275, 95] }], polys: [L1, L2], at, st, arcR: 13, pad: 36 },
       lines: [`$x = $ [[num:${x}]]°`, `$y = $ [[num:${s0}]]`],
       wrongs: [0, 1, 2].map(i => ({ tok: 0, val: ang[i], hint: `x is at ${L2[3]}, which matches ${L1[3]} — the angle that is not marked. Use the angle sum of a quadrilateral (360°).`, trap: 'anglesum' })),
       hints: [`Read the statement: ${[0, 1, 2, 3].map(i => S1[i] + ' ↔ ' + S2[i]).join(', ')}.`, 'The angles of a quadrilateral add up to 360°.'],

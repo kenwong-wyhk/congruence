@@ -11,7 +11,11 @@ student's device (progress ticks are kept in that browser only).
 | 5.5 | Animated compass-and-straight-edge constructions (marked "Not in test/exam") |
 | Game | Correspondence Game, levels L0 (no figure) to L4 (shared parts), plus a 60-second Speed Round |
 | Traps | Trap Gallery — every common mistake with "the trap" vs "do this" |
-| Challenge | 10 random questions from 5.1–5.4; Practice mode or 35-minute Test mode |
+| Challenge | 10 random questions from a pool of 30 (5.1–5.4); Practice mode or 35-minute Test mode (answers and time are saved, so a refresh loses nothing) |
+| Revision sheet | Key points, conditions and reasons on one printable page (`#/sheet`) |
+
+Progress: a practice question counts as **solved** only if the student gets it right without opening the
+solution; "first try" is counted separately. Both are stored only in that browser.
 
 ## Files
 
@@ -32,6 +36,11 @@ data/               the content — edit these to change questions
   s51.js … s55.js   one file per section
   traps.js          Trap Gallery
   challenge.js      Mixed Challenge pool
+  sheet.js          printable revision sheet
+vendor/katex/       KaTeX (maths typesetting, MIT licence) — served from the site itself
+tools/stamp_versions.py   refreshes the ?v= tags in index.html (run automatically by the git hook)
+.githooks/pre-commit      runs the script before every commit
+favicon.svg, icon-180.png, preview.png   tab icon, phone home-screen icon, link-preview image
 ```
 
 ## Previewing on your computer
@@ -62,7 +71,10 @@ Inside proof lines you can also type the symbols directly: `∠ △ ≅ ° // �
 ```
 
 Blanks: `[[num:56]]`, `[[side:AB]]` (BA also accepted), `[[angle:ABC]]` (∠CBA accepted, ∠B rejected with a hint),
-`[[tri:PQR]]`, `[[reason:given]]`, `[[cond:SAS]]`, `[[choice:Yes*|No]]`. Use `|` for alternatives, e.g. `[[num:56|124]]`.
+`[[tri:PQR]]`, `[[reason:given]]`, `[[cond:SAS]]`, `[[choice:Yes*|No]]` (the `*` marks the right option, before or after it).
+Use `|` for alternatives, e.g. `[[num:56|124]]`.
+
+A proof line is split at its first `=` so the equal signs line up; a text line (`{ t: 'In $\triangle ABE$,' }`) starts a new block.
 
 A proof table uses `rows` instead of `lines`: `{ s: 'AB = [[side:DC]]', r: '[[reason:given]]' }`.
 
@@ -88,6 +100,19 @@ Targeted hints for common wrong answers: `wrongs: [{ tok: 0, val: 53, hint: '...
 ```
 
 Add a second entry to `routes` if another proof is also correct (e.g. ASA and AAS).
+
+### Build the statement
+
+```js
+{ type: 'statement', pairs: [['ABD', 'CBD'], ['ADE', 'CDE']], letters: 'ABCDE' }   // any listed pair is accepted, in any consistent order
+```
+
+### Curved figures
+
+```js
+fig: { w: 320, h: 120, fit: false, noLabels: true, pts: {},
+       shapes: [{ d: 'M -28 -26 L 28 -26 L 28 0 A 28 28 0 0 1 -28 0 Z', at: [95, 60], rot: 90, flip: true, scale: 1.2 }] }
+```
 
 ### Figures
 
@@ -117,12 +142,15 @@ check them in the preview, then publish. Nothing is generated while students use
 3. In the repository: **Settings → Pages → Build and deployment → Deploy from a branch**, choose `main` and `/ (root)`, then **Save**.
 4. After a minute the site is live at `https://<your-username>.github.io/congruence/`. Post that link on Google Classroom.
 
-To update the site later, upload the changed files again (or push with git). Students' progress is not affected.
-When you change any file in `js/`, `data/` or `css/`, also raise the version number in `index.html`
-(e.g. every `?v=4` becomes `?v=5`) so students' browsers fetch the new files instead of an old cached copy.
+To update the site later, commit and push with git. Students' progress is not affected.
+Each script and style link in `index.html` carries a `?v=` tag made from that file's contents, so students' browsers
+fetch exactly the files that changed. A git hook refreshes the tags automatically on every commit. In a fresh copy
+of the repository, switch the hook on once with `git config core.hooksPath .githooks`, or run
+`python tools/stamp_versions.py` yourself before committing.
 
 ## Notes
 
-- Fonts (Oswald, Noto Sans HK) and KaTeX load from public CDNs; the school's licensed font files are **not** included.
+- KaTeX is included in `vendor/`, so maths works even if public CDNs are blocked. The fonts (Oswald, Noto Sans HK)
+  load from Google Fonts and fall back to system fonts if blocked; the school's licensed font files are **not** included.
 - No school badge is used, to avoid needing College approval.
 - The worksheet PDFs are not included; all questions are new, modelled on the worksheet examples.

@@ -89,6 +89,11 @@ const Store = {
   seen(id, tab) { const s = this.sec(id); if (!s.seen[tab]) { s.seen[tab] = 1; this.save(); } },
   ok(id, qid) { const s = this.sec(id); if (!s.ok[qid]) { s.ok[qid] = 1; this.save(); } },
   isOk(id, qid) { return !!this.sec(id).ok[qid]; },
+  first(id, qid) { const s = this.sec(id); s.ft = s.ft || {}; if (!s.ft[qid]) { s.ft[qid] = 1; this.save(); } },
+  isFirst(id, qid) { const s = this.sec(id); return !!(s.ft && s.ft[qid]); },
+  // Test mode in progress (saved so a refresh does not lose it)
+  getTest() { if (!this.d) this.load(); return this.d.test || null; },
+  setTest(t) { if (!this.d) this.load(); if (t) this.d.test = t; else delete this.d.test; this.save(); },
   game() { if (!this.d) this.load(); return this.d.game; },
   reset() { this.d = { s: {}, game: { unlocked: 0, counts: {}, best: 0 } }; this.save(); },
 };
