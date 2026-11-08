@@ -119,26 +119,51 @@ const QR = (() => {
     return span;
   }
 
+  // index of the first "=" that is not inside a [[blank]], or -1
+  function firstEq(s) {
+    let depth = 0;
+    for (let i = 0; i < s.length; i++) {
+      if (s.startsWith('[[', i)) { depth++; i++; continue; }
+      if (s.startsWith(']]', i)) { depth = Math.max(0, depth - 1); i++; continue; }
+      if (s[i] === '=' && depth === 0) return i;
+    }
+    return -1;
+  }
+
   // rows: [{ s, r }] maths statement + reason, [{ t }] a text line, or 'string' (text line)
+  // A statement is split at its first "=" so that equal signs line up. Each block of statements
+  // (between text lines such as "In △ABE,") is its own table, so it aligns on its own, like the textbook.
   function proofTable(rows, ctx, toks, opts = {}) {
-    const table = U.el('table', { class: 'proof' });
-    const tb = U.el('tbody');
-    table.append(tb);
+    const table = U.el('div', { class: 'proof-group' });
+    let tb = null;
+    const newTable = () => { const t = U.el('table', { class: 'proof' }); tb = U.el('tbody'); t.append(tb); table.append(t); };
     const trs = rows.map(row => {
       if (typeof row === 'string') row = { t: row };
-      let tr;
-      if (row.t != null) {
-        tr = U.el('tr', { class: 'text' }, U.el('td', { colspan: 2 }, segments(row.t, 'text', ctx, toks)));
-      } else {
-        tr = U.el('tr', {},
-          U.el('td', { class: 's' }, segments(row.s, 'math', ctx, toks)),
-          U.el('td', { class: 'r' }, row.r ? segments(row.r, 'reason', ctx, toks) : ''));
-      }
+      if (row.t != null || !tb) newTable();
+      const tr = makeRow(row);
       tb.append(tr);
+      if (row.t != null) tb = null;
       return tr;
     });
     if (opts.returnRows) return { table, trs };
     return table;
+
+    function makeRow(row) {
+      if (typeof row === 'string') row = { t: row };
+      let tr;
+      if (row.t != null) {
+        tr = U.el('tr', { class: 'text' }, U.el('td', { colspan: 3 }, segments(row.t, 'text', ctx, toks)));
+      } else {
+        const eq = firstEq(row.s);
+        const cells = eq < 0
+          ? [U.el('td', { class: 's', colspan: 2 }, segments(row.s, 'math', ctx, toks))]
+          : [U.el('td', { class: 's s-l' }, row.s.slice(0, eq).trim() ? segments(row.s.slice(0, eq).trim(), 'math', ctx, toks) : ''),
+             U.el('td', { class: 's s-r' }, segments('= ' + row.s.slice(eq + 1).trim(), 'math', ctx, toks))];
+        tr = U.el('tr', {}, ...cells,
+          U.el('td', { class: 'r' }, row.r ? segments(row.r, 'reason', ctx, toks) : ''));
+      }
+      return tr;
+    }
   }
 
   /* ---------- bodies ---------- */
@@ -223,7 +248,7 @@ const QR = (() => {
     const node = U.el('div');
     if (part.pre && part.pre.length) node.append(U.el('div', { class: 'table-wrap' }, proofTable(part.pre, ctx, [])));
     node.append(U.el('p', { html: TEX.render(part.intro || '') }));
-    const table = U.el('table', { class: 'proof' });
+    const table = U.el('table', { class: 'proof bank-table' });
     const tb = U.el('tbody');
     table.append(tb);
     const reasons = uniq([...REASONS, ...(ctx.reasons || [])]);

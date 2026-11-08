@@ -108,7 +108,7 @@
           { t: 'In $\\triangle ADE$,' },
           { s: '∠AED + ∠EAD = ∠ADC', r: 'ext. ∠ of △' },
           { s: '∠AED = ∠ADC − ∠EAD' },
-          { s: '∵ ∠BAC = ∠EAD and ∠ACD = ∠ADC', r: 'given' },
+          { s: '∵ ∠BAC = ∠EAD\\text{ and }∠ACD = ∠ADC', r: 'given' },
           { s: '∴ ∠ABC = ∠AED', hl: [['ABC', 'AED', 1]] },
           { t: '(b) In $\\triangle ABC$ and $\\triangle AED$,' },
           { s: '∠ABC = ∠AED', r: 'proved in (a)', hl: [['ABC', 'AED', 1]] },

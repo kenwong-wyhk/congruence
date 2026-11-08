@@ -51,7 +51,7 @@ const TEX = {
       .replace(/∵/g, '\\because\\ ')
       .replace(/×/g, '\\times ')
       .replace(/−/g, '-')
-      .replace(/(\d)\s*cm\b/g, '$1\\text{ cm}');
+      .replace(/([\d)])\s*cm\b/g, '$1\\text{ cm}');
   },
   k(t, display) {
     try {

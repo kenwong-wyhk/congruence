@@ -133,7 +133,7 @@ p { margin: 8px 0; }
 .key ul, .key ol { padding-left: 22px; margin: 6px 0; }
 .tip { border: 1px solid var(--blue); padding: 12px 14px; margin: 14px 0; }
 .tip-title { font-family: var(--font-display); color: var(--blue); letter-spacing: .03em; }
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
 table.plain { border-collapse: collapse; width: 100%; font-size: 15px; }
 table.plain th, table.plain td { border: 1px solid var(--frame); padding: 6px 8px; text-align: left; vertical-align: top; }
 table.plain th { background: var(--blue-tint); color: var(--blue); font-weight: 500; }
@@ -218,9 +218,14 @@ select.ans { border: 0; border-bottom: 2px solid var(--blue); background: var(--
 .alt { margin-top: 10px; }
 
 /* proof tables */
-table.proof { border-collapse: collapse; margin: 6px 0; width: 100%; max-width: 560px; }
+table.proof { border-collapse: collapse; margin: 0; width: auto; max-width: 100%; }
+table.proof.bank-table { width: 100%; max-width: 560px; }
 table.proof td { padding: 3px 8px; vertical-align: middle; }
-table.proof td.r { border-left: 1.5px solid var(--ink); color: var(--ink); font-size: 15px; width: 42%; }
+table.proof td.s { white-space: nowrap; }
+table.proof td.s-l { text-align: right; padding-right: 0; }
+table.proof td.s-r { padding-left: 0.28em; }
+table.proof td.r { border-left: 1.5px solid var(--ink); color: var(--ink); font-size: 15px; min-width: 8.5em; padding-left: 12px; }
+table.proof.bank-table td.r { width: 42%; }
 table.proof tr.text td { padding-top: 8px; }
 table.proof tr.step-hidden { display: none; }
 table.proof tr.clickable { cursor: pointer; }
