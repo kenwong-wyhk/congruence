@@ -32,7 +32,7 @@ C5.challenge = [
   {
     id: 'c4', type: 'mcq',
     q: 'In the figure, $AB = CB$ and $\\angle BCD = 90^\\circ$. Find $\\angle ADC$.',
-    fig: { w: 280, h: 255, pts: { B: [30, 130], D: [250, 130], A: [120.9, 21.7], C: [120.9, 238.3] }, polys: ['ABD', 'CBD'], rights: ['BCD'], ticks: { AB: 1, CB: 1 }, at: { ABD: '50°', ADB: '40°' } },
+    fig: { w: 280, h: 268, pts: { B: [30, 130], D: [250, 130], A: [120.9, 21.7], C: [120.9, 238.3] }, polys: ['ABD', 'CBD'], rights: ['BCD'], ticks: { AB: 1, CB: 1 }, at: { ABD: '50°', ADB: '40°' } },
     options: ['$40^\\circ$', '$80^\\circ$', '$90^\\circ$', '$100^\\circ$'],
     ans: 1,
     why: { 0: '40° is only ∠ADB. ∠ADC = ∠ADB + ∠CDB.', 2: 'Check which angle is 90°: ∠BAD (from the angle sum of △ABD).', 3: 'Prove the two triangles congruent first, then ∠CDB = ∠ADB.' },

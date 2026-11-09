@@ -150,15 +150,21 @@ const G = (() => {
     return { d: `M${f2(p1[0])} ${f2(p1[1])} A${r} ${r} 0 0 ${d > 0 ? 1 : 0} ${f2(p2[0])} ${f2(p2[1])}`, u, v, p1, p2, B };
   }
 
-  function labelPos(p, nbrs, off) {
+  // Put a vertex label in the widest free gap between the lines meeting there.
+  // `busy` lists directions (radians) of angle marks at this vertex; a gap holding one is avoided.
+  function labelPos(p, nbrs, off, busy = []) {
     if (!nbrs.length) return [p[0], p[1] - off];
     const angs = nbrs.map(q => Math.atan2(q[1] - p[1], q[0] - p[0])).sort((a, b) => a - b);
-    let best = -1, bestA = 0;
+    const inGap = (t, a, b) => { while (t < a) t += 2 * Math.PI; while (t > a + 2 * Math.PI) t -= 2 * Math.PI; return t > a && t < b; };
+    let best = -1, bestA = 0, bestGap = Math.PI;
     for (let i = 0; i < angs.length; i++) {
       const a = angs[i], b = i + 1 < angs.length ? angs[i + 1] : angs[0] + 2 * Math.PI;
-      if (b - a > best) { best = b - a; bestA = a + (b - a) / 2; }
+      const score = (b - a) * (busy.some(t => inGap(t, a, b)) ? 0.25 : 1);
+      if (score > best) { best = score; bestA = a + (b - a) / 2; bestGap = b - a; }
     }
-    return [p[0] + off * Math.cos(bestA), p[1] + off * Math.sin(bestA)];
+    // in a narrow gap, move the label further out so it clears the two lines
+    const d = bestGap >= Math.PI ? off : Math.min(off * 2, off / Math.max(0.5, Math.sin(bestGap / 2)));
+    return [p[0] + d * Math.cos(bestA), p[1] + d * Math.sin(bestA)];
   }
 
   // Draw spec into an SVG group using resolved points.
@@ -300,7 +306,11 @@ const G = (() => {
     Object.keys(pts).forEach(L => {
       if (hide.includes(L) || spec.noLabels) return;
       const nbrs = [...(nb[L] || [])].map(q => pts[q]);
-      let pos = labelPos(pts[L], nbrs, 12);
+      // directions of angle marks (right-angle squares, arcs, angle values) that sit at this vertex
+      const busy = [...(spec.rights || []), ...Object.keys(spec.arcs || {}), ...Object.keys(spec.at || {})]
+        .filter(k => k.length === 3 && k[1] === L && pts[k[0]] && pts[k[2]])
+        .map(k => { const u = V.unit(V.sub(pts[k[0]], pts[L])), v = V.unit(V.sub(pts[k[2]], pts[L])); const m = V.add(u, v); return Math.atan2(m[1], m[0]); });
+      let pos = labelPos(pts[L], nbrs, 12, busy);
       if (spec.lab && spec.lab[L]) pos = V.add(pts[L], spec.lab[L]);
       mk('text', { x: f2(pos[0]), y: f2(pos[1]), class: 'lbl' }, gTxt).textContent = L;
     });
