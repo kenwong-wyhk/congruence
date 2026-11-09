@@ -283,15 +283,35 @@ const DEMO = (() => {
     const fig = G.draw(o.fig);
     const note = U.el('div', { class: 'status', 'aria-live': 'polite' });
     const row = U.el('div', { class: 'btn-row' });
-    o.buttons.forEach(b => {
-      row.append(U.el('button', {
-        type: 'button', class: 'btn ghost small', html: TEX.render(b.label), onclick: () => {
-          fig.clearHL(); fig.highlight(EX.hlList(b.hl)); note.innerHTML = TEX.render(b.note || '');
-        },
-      }));
+    // Toggle buttons: highlights build up. With o.lines, the facts that are on are shown as proof lines
+    // (in the order given by each button's `order`), and o.done appears once every button is on.
+    const on = o.buttons.map(() => false);
+    const btns = [];
+    const paint = () => {
+      fig.clearHL();
+      o.buttons.forEach((b, i) => { if (on[i]) fig.highlight(EX.hlList(b.hl)); });
+      btns.forEach((el, i) => { el.classList.toggle('on', on[i]); el.setAttribute('aria-pressed', on[i]); });
+      U.clear(note);
+      const active = o.buttons.map((b, i) => ({ b, i })).filter(x => on[x.i]);
+      if (!o.lines) { if (active.length) note.innerHTML = TEX.render(active[active.length - 1].b.note || ''); return; }
+      if (!active.length) { note.innerHTML = '<span class="muted">Nothing switched on yet.</span>'; return; }
+      const rows = [{ t: o.lines }, ...active.slice().sort((x, y) => (x.b.order || 0) - (y.b.order || 0)).map(x => x.b.line)];
+      const all = on.every(Boolean);
+      if (all && o.done) rows.push(o.done);
+      note.append(U.el('div', { class: 'table-wrap' }, QR.proofTable(rows, {}, [])));
+      const last = active.length && !all ? active[active.length - 1].b.note : null;
+      if (last) note.append(U.el('p', { class: 'small', html: TEX.render(last) }));
+      if (all && o.doneNote) note.append(U.el('p', { class: 'status good', html: TEX.render(o.doneNote) }));
+    };
+    o.buttons.forEach((b, i) => {
+      const el = U.el('button', { type: 'button', class: 'btn ghost small toggle', 'aria-pressed': 'false', html: TEX.render(b.label) });
+      el.addEventListener('click', () => { on[i] = !on[i]; paint(); });
+      btns.push(el);
+      row.append(el);
     });
-    row.append(U.el('button', { type: 'button', class: 'btn ghost small', text: 'Clear', onclick: () => { fig.clearHL(); note.innerHTML = ''; } }));
+    row.append(U.el('button', { type: 'button', class: 'btn ghost small', text: 'Clear all', onclick: () => { on.fill(false); paint(); } }));
     box.append(U.el('div', { class: 'fig-wrap' }, fig.svg), row, note);
+    paint();
     return box;
   }
 

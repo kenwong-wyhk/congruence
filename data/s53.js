@@ -72,16 +72,18 @@
       {
         hlfig: {
           title: 'Spot the hidden parts',
-          intro: 'In the figure, $AE$ and $BD$ meet at $C$, $AB \\parallel DE$ and $AC = CE$. Tap each button.',
+          intro: 'In the figure, $AE$ and $BD$ meet at $C$, $AB \\parallel DE$ and $AC = CE$. Switch on each fact — can you see which condition they make?',
           fig: bowtie,
+          lines: 'In $\\triangle ABC$ and $\\triangle EDC$,',
           buttons: [
-            { label: 'Given', hl: [['AC', 'CE', 1]], note: '$AC = CE$ (given).' },
-            { label: 'Vert. opp. ∠s', hl: [['ACB', 'ECD', 2]], note: '$\\angle ACB = \\angle ECD$ (vert. opp. ∠s): AE and BD are straight lines that cross at C.' },
-            { label: 'Alt. ∠s', hl: [['BAC', 'DEC', 3]], note: '$\\angle BAC = \\angle DEC$ (alt. ∠s, AB // DE).' },
+            { label: 'Given', order: 2, hl: [['AC', 'CE', 1]], line: { s: 'AC = EC', r: 'given' }, note: 'This one is in the question.' },
+            { label: 'Vert. opp. ∠s', order: 3, hl: [['ACB', 'ECD', 2]], line: { s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s' }, note: '$AE$ and $BD$ are straight lines that cross at $C$.' },
+            { label: 'Alt. ∠s', order: 1, hl: [['BAC', 'DEC', 3]], line: { s: '∠BAC = ∠DEC', r: 'alt. ∠s, AB // DE' }, note: 'The arrows tell you $AB \\parallel DE$.' },
           ],
+          done: { s: '∴ △ABC ≅ △EDC', r: 'ASA' },
+          doneNote: 'Angle at $A$, side $AC$, angle at $C$ — the side $AC$ is <b>between</b> the two angles, so it is <b>ASA</b>.',
         },
       },
-      { p: 'With these three facts: $\\angle BAC = \\angle DEC$, $AC = EC$, $\\angle ACB = \\angle ECD$, so $\\triangle ABC \\cong \\triangle EDC$ (ASA).' },
       { title: 'Strategy', tip: '<ol><li><b>Split</b> the figure: which two triangles?</li><li><b>Mark</b> the given facts on the figure.</li><li><b>Hunt</b> for hidden equal parts (table above).</li><li><b>Match</b> a condition. Two pairs of sides? Think SSS, SAS or RHS. A side and angles? Think ASA or AAS.</li><li><b>Write</b> it, with matching vertex order and a reason on every line.</li></ol>' },
       { title: 'After proving congruence', key: 'You can then use<ul><li><b>corr. sides, ≅ △s</b> and <b>corr. ∠s, ≅ △s</b> to find or prove other equal parts;</li><li><b>corr. ∠s equal</b> or <b>alt. ∠s equal</b> to prove two lines are <b>parallel</b>.</li></ul>' },
     ],

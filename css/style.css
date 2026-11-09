@@ -361,3 +361,5 @@ input[type=range] { width: 100%; accent-color: var(--blue); min-height: 36px; }
 .rx-detail table.proof td.r { border-left: 1.5px solid var(--ink); }
 .rx-detail table.proof td.s-l { padding-right: 0; }
 .rx-detail table.proof td.s-r { padding-left: 0.28em; }
+
+.btn.toggle[aria-pressed="true"] { background: var(--blue); color: var(--white); }
