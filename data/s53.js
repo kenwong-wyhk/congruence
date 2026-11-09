@@ -11,21 +11,61 @@
     learn: [
       { title: 'The five conditions', key: '<b>SSS</b>, <b>SAS</b> (included angle), <b>ASA</b> (side between the angles), <b>AAS</b> (side not between), <b>RHS</b> (right angle, hypotenuse, side).<br>And two properties you use <b>after</b> proving: <b>corr. sides, ≅ △s</b> and <b>corr. ∠s, ≅ △s</b>.' },
       { h: 'Hunting for hidden equal parts' },
-      { p: 'In most proofs, the question gives you two pairs of equal parts. The third pair is hiding in the figure. Here is where to look:' },
+      { p: 'In most proofs, the question gives you two pairs of equal parts. The third pair is hiding in the figure. Here is where to look — <b>tap a row</b> to see it in a figure:' },
       {
-        table: {
+        reasons: {
           head: ['What you see in the figure', 'What you can write', 'Reason'],
           rows: [
-            ['A side shared by both triangles', '$BD = BD$', 'common side'],
-            ['An angle shared by both triangles', '$\\angle CAE = \\angle DAB$', 'common ∠'],
-            ['Two straight lines crossing', '$\\angle ACB = \\angle ECD$', 'vert. opp. ∠s'],
-            ['Two equal angles in one triangle', '$EB = EC$', 'sides opp. equal ∠s'],
-            ['Two equal sides in one triangle', '$\\angle EBC = \\angle ECB$', 'base ∠s, isos. △'],
-            ['Parallel lines (given!)', '$\\angle BAC = \\angle DEC$', 'alt. ∠s, AB // DE'],
-            ['Two known angles of a triangle', '$\\angle BAC = 180^\\circ - \\angle ABC - \\angle BCA$', '∠ sum of △'],
-            ['A mid-point (given)', '$C$ is the mid-point of $BD$, so $BC = DC$', 'given'],
-            ['An angle on a straight line', '$\\angle ADB = 180^\\circ - \\angle ADE$', 'adj. ∠s on st. line'],
-            ['Equal pieces added on', '$AF = AE + EF = FD + EF = ED$', '(show the working)'],
+            {
+              see: 'A side shared by both triangles', write: '$BD = BD$', reason: 'common side',
+              ex: { fig: { w: 300, h: 200, pts: { B: [30, 100], D: [270, 100], A: [110, 30], C: [110, 170] }, polys: ['ABD', 'CBD'] }, hl: [['BD', 1]],
+                lines: [{ t: 'In $\\triangle ABD$ and $\\triangle CBD$,' }, { s: 'BD = BD', r: 'common side' }], note: '$BD$ is a side of <b>both</b> triangles, so it is equal to itself.' },
+            },
+            {
+              see: 'An angle shared by both triangles', write: '$\\angle CAE = \\angle DAB$', reason: 'common ∠',
+              ex: { fig: { w: 290, h: 220, pts: { A: [30, 110], B: [132, 68.8], C: [252.5, 20], E: [132, 151.2], D: [252.5, 200] }, polys: ['ACE', 'ADB'], lines: ['ABC', 'AED'] }, hl: [['CAE', 1]],
+                lines: [{ t: 'In $\\triangle ACE$ and $\\triangle ADB$,' }, { s: '∠CAE = ∠DAB', r: 'common ∠' }], note: 'The angle at $A$ is part of <b>both</b> triangles. $\\angle CAE$ and $\\angle DAB$ are two names for the same angle.' },
+            },
+            {
+              see: 'Two straight lines crossing', write: '$\\angle ACB = \\angle ECD$', reason: 'vert. opp. ∠s',
+              ex: { fig: { w: 260, h: 195, pts: { A: [40, 30], B: [200, 30], C: [130, 100], D: [60, 170], E: [220, 170] }, polys: ['ABC', 'EDC'] }, hl: [['ACB', 'ECD', 1]],
+                lines: [{ s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s' }], note: '$AE$ and $BD$ are straight lines crossing at $C$. The angles opposite each other are equal.' },
+            },
+            {
+              see: 'Two equal angles in one triangle', write: '$EB = EC$', reason: 'sides opp. equal ∠s',
+              ex: { fig: { w: 280, h: 170, pts: { E: [140, 25], B: [40, 145], C: [240, 145] }, polys: ['EBC'], arcs: { EBC: 1, ECB: 1 } }, hl: [['EBC', 'ECB', 1], ['EB', 'EC', 2]],
+                lines: [{ s: '∵ ∠EBC = ∠ECB', r: 'given' }, { s: '∴ EB = EC', r: 'sides opp. equal ∠s' }], note: 'Equal <b>angles</b> ⇒ the <b>sides opposite</b> them are equal.' },
+            },
+            {
+              see: 'Two equal sides in one triangle', write: '$\\angle EBC = \\angle ECB$', reason: 'base ∠s, isos. △',
+              ex: { fig: { w: 280, h: 170, pts: { E: [140, 25], B: [40, 145], C: [240, 145] }, polys: ['EBC'], ticks: { EB: 1, EC: 1 } }, hl: [['EB', 'EC', 1], ['EBC', 'ECB', 2]],
+                lines: [{ s: '∵ EB = EC', r: 'given' }, { s: '∴ ∠EBC = ∠ECB', r: 'base ∠s, isos. △' }], note: 'Equal <b>sides</b> ⇒ the <b>base angles</b> are equal. (It is the reverse of the row above — choose the one that goes the way you need.)' },
+            },
+            {
+              see: 'Parallel lines (given!)', write: '$\\angle BAC = \\angle DEC$', reason: 'alt. ∠s, AB // DE',
+              ex: { fig: { w: 260, h: 195, pts: { A: [40, 30], B: [200, 30], C: [130, 100], D: [60, 170], E: [220, 170] }, polys: ['ABC', 'EDC'], arrows: { AB: 1, DE: 1 } }, hl: [['BAC', 'DEC', 1]],
+                lines: [{ s: '∠BAC = ∠DEC', r: 'alt. ∠s, AB // DE' }], note: 'Only use this when the question <b>says</b> $AB \\parallel DE$ (arrows on the lines) — never because the lines look parallel.' },
+            },
+            {
+              see: 'Two known angles of a triangle', write: '$\\angle BAC = 180^\\circ - \\angle ABC - \\angle BCA$', reason: '∠ sum of △',
+              ex: { fig: { w: 280, h: 170, make: [{ tri: 'ABC', ang: [60, 70, 50], box: [40, 15, 200, 140] }], polys: ['ABC'], at: { ABC: '70°', BCA: '50°' } }, hl: [['BAC', 1]],
+                lines: [{ t: 'In $\\triangle ABC$,' }, { s: '∠BAC = 180° − 70° − 50°', r: '∠ sum of △' }, { s: '= 60°' }], note: 'Know two angles ⇒ know the third. This is how AAS and ASA can turn into each other.' },
+            },
+            {
+              see: 'A mid-point (given)', write: '$C$ is the mid-point of $BD$, so $BC = DC$', reason: 'given',
+              ex: { fig: { w: 320, h: 165, pts: { A: [60, 30], E: [260, 30], B: [30, 140], D: [290, 140], C: [160, 140] }, polys: ['ABC', 'EDC'], lines: ['BCD'], dots: 'C' }, hl: [['BC', 'CD', 1]],
+                lines: [{ s: 'BC = DC', r: 'given' }], note: '"$C$ is the mid-point of $BD$" is in the question, so the reason is <b>given</b> — not "common side": $BC$ and $DC$ are two different sides.' },
+            },
+            {
+              see: 'An angle on a straight line', write: '$\\angle ADB = 180^\\circ - \\angle ADE$', reason: 'adj. ∠s on st. line',
+              ex: { fig: { w: 300, h: 200, pts: { E: [30, 100], D: [110, 100], B: [280, 100], A: [160, 30], C: [160, 170] }, polys: ['ABD', 'CBD'], lines: ['EDB'] }, hl: [['ADE', 1], ['ADB', 2]],
+                lines: [{ s: '∠ADB = 180° − ∠ADE', r: 'adj. ∠s on st. line' }], note: '$EDB$ is a straight line, so the two angles at $D$ (one each side of $DA$) add up to $180^\\circ$.' },
+            },
+            {
+              see: 'Equal pieces added on', write: '$AF = AE + EF = FD + EF = ED$', reason: '(show the working)',
+              ex: { fig: { w: 260, h: 215, pts: { A: [20, 30], E: [75, 70], F: [185, 150], D: [240, 190] }, lines: ['AEFD'], dots: 'AEFD', ticks: { AE: 1, FD: 1 } }, hl: [['AE', 'FD', 1], ['EF', 2]],
+                lines: [{ s: '∵ AE = FD', r: 'given' }, { s: '∴ AE + EF = FD + EF' }, { s: '∴ AF = ED' }], note: '$AF$ and $ED$ are not given equal. Add the same piece $EF$ to two equal pieces, and <b>show</b> the working.' },
+            },
           ],
         },
       },

@@ -347,3 +347,17 @@ input[type=range] { width: 100%; accent-color: var(--blue); min-height: 36px; }
   table.plain { font-size: 9.5pt; break-inside: avoid; }
   table.plain th { background: none; }
 }
+
+/* tappable reasons table */
+.rx-table tr.rx-row { cursor: pointer; }
+.rx-table tr.rx-row:hover td, .rx-table tr.rx-row.open td { background: var(--blue-tint); }
+.show-btn { margin-top: 4px; border: 1px solid var(--blue); background: var(--white); color: var(--blue); font-size: 13px; padding: 2px 8px; min-height: 30px; cursor: pointer; font-family: var(--font-display); letter-spacing: .03em; }
+.rx-table tr.rx-detail > td { background: var(--white); border-top: 0; padding: 10px; }
+.rx-box { display: grid; grid-template-columns: 1fr; gap: 6px; align-items: center; }
+.rx-box .fig-wrap { margin: 0; }
+.rx-box .fig { max-width: 340px !important; }
+@media (min-width: 620px) { .rx-box { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.rx-detail table.proof td { border: 0; padding: 3px 8px; vertical-align: middle; }
+.rx-detail table.proof td.r { border-left: 1.5px solid var(--ink); }
+.rx-detail table.proof td.s-l { padding-right: 0; }
+.rx-detail table.proof td.s-r { padding-left: 0.28em; }

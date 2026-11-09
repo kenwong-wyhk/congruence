@@ -55,6 +55,7 @@
         U.el('thead', {}, U.el('tr', {}, b.table.head.map(h => U.el('th', { html: TEX.render(h) })))),
         U.el('tbody', {}, b.table.rows.map(r => U.el('tr', {}, r.map(c => U.el('td', { html: TEX.render(c) })))))));
     }
+    if (b.reasons) return reasonTable(b.reasons);
     if (b.fig) return figBlock(b.fig, b.cap);
     if (b.figs) return U.el('div', { class: 'cards' }, b.figs.map(f => U.el('div', {}, figBlock(f.fig, f.cap))));
     if (b.demo === 'overlay') return DEMO.overlay(b.opts || {});
@@ -65,6 +66,44 @@
     if (b.example) return EX.render(b.example, b.num || '');
     return U.el('div');
   }
+  /* A table whose rows open a worked mini-example: a figure with the parts highlighted, the proof line(s), a note.
+     { reasons: { head:[...3], rows:[{ see, write, reason, ex:{ fig, hl, lines, note } }] } } */
+  function reasonTable(t) {
+    let open = null;
+    const tbody = U.el('tbody');
+    t.rows.forEach((r, i) => {
+      const id = 'rx-' + Math.random().toString(36).slice(2, 8);
+      const btn = U.el('button', { type: 'button', class: 'show-btn', 'aria-expanded': 'false', 'aria-controls': id, text: 'Show me ▸' });
+      const tr = U.el('tr', { class: 'rx-row' },
+        U.el('td', {}, U.el('div', { html: TEX.render(r.see) }), btn),
+        U.el('td', { html: TEX.render(r.write) }),
+        U.el('td', { html: TEX.render(r.reason) }));
+      const toggle = () => {
+        const wasMe = open && open.tr === tr;
+        if (open) { open.detail.remove(); open.btn.setAttribute('aria-expanded', 'false'); open.btn.textContent = 'Show me ▸'; open.tr.classList.remove('open'); open = null; }
+        if (wasMe) return;
+        const ex = r.ex;
+        const fig = G.draw(ex.fig);
+        if (ex.hl) fig.highlight(EX.hlList(ex.hl));
+        const detail = U.el('tr', { class: 'rx-detail', id },
+          U.el('td', { colspan: 3 }, U.el('div', { class: 'rx-box' },
+            U.el('div', { class: 'fig-wrap' }, fig.svg),
+            U.el('div', {},
+              ex.lines ? U.el('div', { class: 'table-wrap' }, QR.proofTable(ex.lines, {}, [])) : '',
+              ex.note ? U.el('p', { class: 'small', html: TEX.render(ex.note) }) : ''))));
+        tr.after(detail);
+        tr.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true'); btn.textContent = 'Hide ▾';
+        open = { tr, detail, btn };
+      };
+      btn.addEventListener('click', e => { e.stopPropagation(); toggle(); });
+      tr.addEventListener('click', toggle);
+      tbody.append(tr);
+    });
+    return U.el('div', { class: 'table-wrap' }, U.el('table', { class: 'plain rx-table' },
+      U.el('thead', {}, U.el('tr', {}, t.head.map(h => U.el('th', { html: TEX.render(h) })))), tbody));
+  }
+
   function figBlock(spec, cap) {
     const f = G.draw(spec);
     return U.el('div', { class: 'fig-wrap' }, f.svg, cap ? U.el('div', { class: 'cap', html: TEX.render(cap) }) : '');
