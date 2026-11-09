@@ -363,3 +363,6 @@ input[type=range] { width: 100%; accent-color: var(--blue); min-height: 36px; }
 .rx-detail table.proof td.s-r { padding-left: 0.28em; }
 
 .btn.toggle[aria-pressed="true"] { background: var(--blue); color: var(--white); }
+
+/* letter keys are maths variables: italic, like the letters in the figures and statements */
+.keypad button:not(.sym) { font-style: italic; }
