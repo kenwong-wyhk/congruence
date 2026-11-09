@@ -70,7 +70,7 @@ Inside proof lines you can also type the symbols directly: `∠ △ ≅ ° // �
 }
 ```
 
-Blanks: `[[num:56]]`, `[[side:AB]]` (BA also accepted), `[[angle:ABC]]` (∠CBA accepted, ∠B rejected with a hint),
+Blanks: `[[num:56]]` (marked exactly: 6.3 and 6.30 are right, 6.35 is wrong; fractions like `[[num:1/2]]` work), `[[side:AB]]` (BA also accepted), `[[angle:ABC]]` (∠CBA accepted, ∠B rejected with a hint),
 `[[tri:PQR]]`, `[[reason:given]]`, `[[cond:SAS]]`, `[[choice:Yes*|No]]` (the `*` marks the right option, before or after it).
 Use `|` for alternatives, e.g. `[[num:56|124]]`.
 
@@ -150,7 +150,8 @@ of the repository, switch the hook on once with `git config core.hooksPath .gith
 
 ## Notes
 
-- KaTeX is included in `vendor/`, so maths works even if public CDNs are blocked. The fonts (Oswald, Noto Sans HK)
-  load from Google Fonts and fall back to system fonts if blocked; the school's licensed font files are **not** included.
+- Everything is served from the site itself — KaTeX (`vendor/katex/`, MIT) and the fonts Oswald and Noto Sans HK
+  (`vendor/fonts/`, Latin subsets, SIL Open Font License) — so a visit makes **no requests to any other server**.
+  Versions and checksums are in each folder's `VERSION.txt`. The school's licensed font files are **not** included.
 - No school badge is used, to avoid needing College approval.
 - The worksheet PDFs are not included; all questions are new, modelled on the worksheet examples.

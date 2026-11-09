@@ -87,8 +87,8 @@ const QR = (() => {
         const v = el.value;
         if (kind === 'reason' || kind === 'cond') { if (!v) return { ok: false, empty: true }; return { ok: alts.includes(v), val: v }; }
         if (kind === 'choice') { if (!v) return { ok: false, empty: true }; return { ok: rightChoices.includes(v), val: v }; }
-        const a = alts.join('/');
-        const r = kind === 'num' ? CK.num(v, a) : kind === 'side' ? CK.side(v, a) : kind === 'angle' ? CK.angle(v, a) : kind === 'tri' ? CK.tri(v, a) : CK.text(v, raw);
+        const a = alts;   // pass the alternatives as an array (a fraction like 1/2 stays one answer)
+        const r = kind === 'num' ? CK.num(v, a) : kind === 'side' ? CK.side(v, a) : kind === 'angle' ? CK.angle(v, a) : kind === 'tri' ? CK.tri(v, a) : CK.text(v, alts);
         if (r.val == null) r.val = CK.norm(v);
         return r;
       },
@@ -183,6 +183,7 @@ const QR = (() => {
       node,
       eval() {
         let ok = true, empty = false, hint = null, trap = null;
+        const hints = [];   // one entry per wrong blank that has something specific to say
         toks.forEach((t, i) => {
           const r = t.check();
           t.el.classList.toggle('ok', r.ok);
@@ -191,11 +192,12 @@ const QR = (() => {
           if (!r.ok) {
             ok = false;
             const w = (part.wrongs || []).find(x => x.tok === i && String(x.val).toUpperCase() === String(r.val).toUpperCase());
-            if (!hint && w) { hint = w.hint; trap = w.trap || null; }
-            if (!hint && r.hint) { hint = r.hint; trap = r.trap || null; }
+            const h = w ? w.hint : r.hint, tr = w ? (w.trap || null) : (r.trap || null);
+            if (h) hints.push({ el: t.el, hint: h, trap: tr });
+            if (!hint && h) { hint = h; trap = tr; }
           }
         });
-        return { ok, empty, hint, trap };
+        return { ok, empty, hint, trap, hints };
       },
       reveal() { toks.forEach(t => { if (!t.check().ok) { t.el.classList.add('bad'); t.el.title = 'Answer: ' + t.answerText(); } }); },
       state() { return toks.map(t => t.el.value); },
@@ -447,7 +449,14 @@ const QR = (() => {
     };
     function evaluate() {
       const res = bodies.map(b => b.eval());
-      return { ok: res.every(r => r.ok), empty: res.some(r => r.empty && !r.ok), first: res.find(r => !r.ok && r.hint) || res.find(r => !r.ok && r.trap) || {} };
+      // every specific hint from every wrong blank; numbered by box when there is more than one
+      const all = res.filter(r => !r.ok).flatMap(r => r.hints || (r.hint ? [{ hint: r.hint, trap: r.trap }] : []));
+      const boxes = [...root.querySelectorAll('.ans')];
+      const seen = new Set();
+      const list = all.filter(h => !seen.has(h.hint) && seen.add(h.hint));
+      const lines = list.map(h => (list.length > 1 && h.el ? `Box ${boxes.indexOf(h.el) + 1}: ` : '') + h.hint);
+      const firstTrap = (all.find(h => h.trap) || res.find(r => !r.ok && r.trap) || {}).trap || null;
+      return { ok: res.every(r => r.ok), empty: res.some(r => r.empty && !r.ok), first: { hint: lines.join('<br>') || null, trap: firstTrap } };
     }
     function check() {
       const r = evaluate();
@@ -463,7 +472,12 @@ const QR = (() => {
         opts.onResult && opts.onResult(true, first, !peeked);
         return;
       }
-      if (r.empty && !r.first.hint) { showFb(false, 'Not finished yet', 'Answer every blank first.', null); return; }
+      if (r.empty && !r.first.hint) {
+        const kinds = parts.map(p => p.type || 'fill');
+        const msg = kinds.every(k => k === 'mcq') ? 'Choose an option first.' : 'Fill in every box before checking.';
+        showFb(false, 'Not finished yet', msg, null);
+        return;
+      }
       attempts++;
       const hints = q.hints || [];
       let msg;

@@ -221,6 +221,12 @@
           {
             type: 'fill', label: '(b) Prove that $AB \\parallel EC$.',
             rows: [{ s: '∵ △ABC ≅ △ECD', r: 'proved in (a)' }, { s: '∴ ∠ABC = [[angle:ECD]]', r: '[[reason:corr. ∠s, ≅ △s]]' }, { s: '∴ AB // EC', r: '[[reason:corr. ∠s equal]]' }],
+            // token 2 is the reason for "∴ AB // EC"
+            wrongs: [
+              { tok: 2, val: 'corr. ∠s, CA // DE', hint: 'You are proving that AB // EC. That reason starts from parallel lines (and different ones). To prove lines parallel, use "corr. ∠s equal" (no "//").', trap: 'parallel' },
+              { tok: 2, val: 'alt. ∠s, CA // DE', hint: 'You are proving that AB // EC, so use a reason without "//". ∠ABC and ∠ECD sit in the same position at B and at C (an F-shape): "corr. ∠s equal".', trap: 'parallel' },
+              { tok: 2, val: 'alt. ∠s equal', hint: '∠ABC and ∠ECD sit in the same position at B and at C (an F-shape), so they are corresponding angles.' },
+            ],
           },
         ],
         hints: ['CA // DE gives you a pair of corresponding angles at C and D.', 'AB and EC are the hypotenuses.'],
@@ -240,7 +246,7 @@
         sol: [{ t: 'In $\\triangle ACE$ and $\\triangle ADB$,' }, { s: '∠CAE = ∠DAB', r: 'common ∠' }, { s: '∠AEC = ∠ABD', r: 'given' }, { s: 'CE = DB', r: 'given' }, { s: '∴ △ACE ≅ △ADB', r: 'AAS' }],
       },
       {
-        id: '53-6', level: 2, type: 'mcq',
+        id: '53-6', hints: ['List what you get for free: AC = EC (given), the angles at C (vert. opp. ∠s) and the angles at A, E and at B, D (alt. ∠s, AB // DE). Which conditions can these make? Is BC = DC known?'], level: 2, type: 'mcq',
         q: 'In the figure, $AE$ and $BD$ meet at $C$, $AB \\parallel DE$ and $AC = CE$. Which of the following can be a correct reason for proving $\\triangle ABC \\cong \\triangle EDC$?<br>I. SAS &nbsp; II. ASA &nbsp; III. AAS',
         fig: bowtie,
         options: ['I and II only', 'I and III only', 'II and III only', 'I, II and III'],
@@ -274,7 +280,7 @@
         sol: [{ t: '(a)' }, { s: '∠CAB = 180° − 90° − ∠ACB', r: '∠ sum of △' }, { s: '∠ECD = 180° − 90° − ∠ACB', r: 'adj. ∠s on st. line' }, { s: '∴ ∠CAB = ∠ECD' }, { t: '(b) In $\\triangle ABC$ and $\\triangle CDE$,' }, { s: '∠CAB = ∠ECD', r: 'proved in (a)' }, { s: '∠ABC = ∠CDE = 90°', r: 'given' }, { s: 'AC = CE', r: 'given' }, { s: '∴ △ABC ≅ △CDE', r: 'AAS' }],
       },
       {
-        id: '53-8', level: 1, type: 'mcq',
+        id: '53-8', hints: ['Is the right angle between the two pairs of equal sides, or opposite one of them?'], level: 1, type: 'mcq',
         q: 'In the figure, $ACE$ and $BCD$ are straight lines and $AE \\perp BD$. The reason for $\\triangle ACD \\cong \\triangle ECB$ is',
         fig: { w: 300, h: 200, pts: { C: [150, 100], A: [110, 30], E: [190, 170], B: [228, 55.4], D: [72, 144.6] }, polys: ['ACD', 'ECB'], rights: ['ACB'], ticks: { AC: 1, CE: 1, BC: 2, CD: 2 } },
         options: ['SSS', 'SAS', 'ASA', 'RHS'],

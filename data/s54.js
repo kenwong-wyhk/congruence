@@ -176,7 +176,7 @@
         options: ['I and II only', 'I and III only', 'II and III only', 'I, II and III'],
         ans: 0,
         why: { 1: 'Count the squares in III: it has a longer tail (6 squares, not 5).', 2: 'Count the squares in III: it has a longer tail.', 3: 'III has 6 squares; the given figure has 5.' },
-        whyTrap: { 0: 'flip' },
+        whyTrap: { 1: 'flip' },
         sol: ['I is the given figure turned through 90°. II is the given figure flipped over. Both are congruent.', 'III has 6 squares, so it is bigger — not congruent. The answer is <b>A</b>.'],
       },
       { id: '54-r', gen: 's54rand' },
@@ -194,7 +194,7 @@
         id: '54-8', level: 2,
         q: 'In the figure, $CDHG$ is a straight line. $ABCH$ and $EFGD$ are two quadrilaterals such that $ABCH \\cong EFGD$.',
         fig: { w: 300, h: 230, pts: PARQ, fit: true, pad: 30, polys: ['ABCH', 'EFGD'], lines: ['CDHG'], at: { BCH: '58°', EFG: '80°', DEF: '100°' }, arcR: 13, lab: { D: [12, -7], C: [-4, 14], H: [-12, 6], G: [10, -8] } },
-        reasons: ['alt. ∠s equal', 'corr. ∠s equal', '∠ sum of polygon'],
+        reasons: ['alt. ∠s equal', 'corr. ∠s equal', 'alt. ∠s, BC // DE', 'corr. ∠s, BC // DE', '∠ sum of polygon'],
         parts: [
           { type: 'fill', label: '(a) Find $\\angle EDG$.', lines: ['$\\angle EDG = $ [[num:122]]°'], wrongs: [{ tok: 0, val: 58, hint: '∠EDG has vertex D, which matches H (not C). Find ∠AHC first with the angle sum of ABCH.', trap: 'position' }] },
           {
@@ -206,6 +206,12 @@
               { s: '∴ BC // DE', r: '[[reason:alt. ∠s equal]]' },
             ],
             lines: ['Is $BC \\parallel DE$? [[choice:Yes*|No]]'],
+            // token 3 is the reason for "∴ BC // DE" (token 0 is the Yes/No choice above the rows)
+            wrongs: [
+              { tok: 3, val: 'alt. ∠s, BC // DE', hint: 'You are proving that BC // DE, so you cannot use it as a reason. To prove lines parallel, use "alt. ∠s equal" (no "//").', trap: 'parallel' },
+              { tok: 3, val: 'corr. ∠s, BC // DE', hint: 'You are proving that BC // DE, so you cannot use it as a reason. Also, ∠EDC and ∠BCD are on opposite sides of CD: they are alternate angles.', trap: 'parallel' },
+              { tok: 3, val: 'corr. ∠s equal', hint: '∠EDC and ∠BCD are on opposite sides of the line CD (a Z-shape), so they are alternate angles.' },
+            ],
           },
         ],
         hints: ['A ↔ E, B ↔ F, C ↔ G, H ↔ D. So ∠EDG = ∠AHC.', 'For (b): ∠EDC and ∠BCD are on opposite sides of the line CD — alternate angles.'],
@@ -231,7 +237,13 @@
         q: 'It is given that $ABCDE \\cong VWXYZ$, $\\angle EAB = 100^\\circ$, $\\angle ABC = 120^\\circ$, $\\angle BCD = 95^\\circ$ and $\\angle CDE = 115^\\circ$. Find $\\angle YZV$.',
         letters: 'ABCDEVWXYZ',
         lines: ['$\\angle YZV = $ [[num:110]]°'],
-        wrongs: [{ tok: 0, val: 115, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not D.', trap: 'order' }, { tok: 0, val: 250, hint: 'A pentagon\'s angles add up to 540°, not 360°.' }],
+        wrongs: [
+          { tok: 0, val: 100, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not A.', trap: 'order' },
+          { tok: 0, val: 120, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not B.', trap: 'order' },
+          { tok: 0, val: 95, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not C.', trap: 'order' },
+          { tok: 0, val: 115, hint: '∠YZV has vertex Z, the 5th letter. It matches E, not D.', trap: 'order' },
+          { tok: 0, val: 290, hint: '720° is the angle sum of a hexagon (6 sides). A pentagon has 5 sides: (5 − 2) × 180° = 540°.' },
+        ],
         hints: ['∠YZV matches ∠DEA.', 'The angles of a pentagon add up to (5 − 2) × 180° = 540°.'],
         sol: [{ s: '∠DEA = 540° − 100° − 120° − 95° − 115°', r: '∠ sum of polygon' }, { s: '= 110°' }, { s: '∠YZV = ∠DEA' }, { s: '= \\underline{\\underline{110°}}' }],
       },

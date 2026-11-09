@@ -154,7 +154,7 @@
     ],
     practice: [
       {
-        id: '52-1', level: 1, type: 'mcq',
+        id: '52-1', hints: ['Match the sides by length: 4 cm with 4 cm, 5 cm with 5 cm. B is between the 4 cm and 5 cm sides of △ABC. Which vertex is between them in the other triangle?'], level: 1, type: 'mcq',
         q: 'Refer to the figure. Which of the following must be true?',
         fig: { w: 340, h: 190, make: [{ tri: 'ABC', ang: [55.8, 82.8, 41.4], box: [15, 20, 140, 140] }], derive: [{ src: 'ABC', dst: 'DFE', flip: true, rot: 150, at: [255, 95] }], polys: ['ABC', 'DFE'], st: { AB: '4 cm', BC: '5 cm', CA: '6 cm', DF: '4 cm', FE: '5 cm', ED: '6 cm' } },
         options: ['$\\triangle ABC \\cong \\triangle DEF$ (SSS)', '$\\triangle ABC \\cong \\triangle DFE$ (SSS)', '$\\triangle ABC \\cong \\triangle EFD$ (SSS)', '$\\triangle ABC \\cong \\triangle DFE$ (RHS)'],
@@ -164,7 +164,7 @@
         sol: ['AB = DF = 4 cm, BC = FE = 5 cm, CA = ED = 6 cm.', 'So A ↔ D, B ↔ F, C ↔ E, and $\\triangle ABC \\cong \\triangle DFE$ (SSS). The answer is <b>B</b>.'],
       },
       {
-        id: '52-2', level: 1, type: 'mcq',
+        id: '52-2', hints: ['Both triangles have a right angle, and BD is opposite both right angles. What is BD called?'], level: 1, type: 'mcq',
         q: 'Refer to the figure. The reason for $\\triangle ABD \\cong \\triangle CBD$ is',
         fig: { w: 300, h: 215, pts: { B: [40, 110], D: [260, 110], A: [65.7, 39.3], C: [65.7, 180.7] }, polys: ['ABD', 'CBD'], rights: ['BAD', 'BCD'], st: { AB: '3', CB: '3' } },
         options: ['SSS', 'SSA', 'AAS', 'RHS'],
@@ -208,7 +208,7 @@
         sol: [{ t: 'In $\\triangle ABE$ and $\\triangle CBD$,' }, { s: '∠BAE = ∠BCD', r: 'given' }, { s: 'AE = CD', r: 'given' }, { s: '∠AEB = ∠CDB', r: 'given' }, { s: '∴ △ABE ≅ △CBD', r: 'ASA' }],
       },
       {
-        id: '52-5', level: 1, type: 'mcq',
+        id: '52-5', hints: ['In each triangle, is the 70° angle between the 5 cm side and the 6 cm side?'], level: 1, type: 'mcq',
         q: 'Which two of the following triangles must be congruent?',
         fig: {
           w: 340, h: 290,
@@ -224,7 +224,7 @@
         sol: [{ t: 'In $\\triangle ABC$ and $\\triangle PRQ$,' }, { s: 'AB = PR', r: 'given' }, { s: '∠BAC = ∠RPQ', r: 'given' }, { s: 'AC = PQ', r: 'given' }, { s: '∴ △ABC ≅ △PRQ', r: 'SAS' }, { t: 'In $\\triangle DEF$ the angle is not included, so no conclusion (SSA). The answer is <b>B</b>.' }],
       },
       {
-        id: '52-6', level: 1, type: 'mcq',
+        id: '52-6', hints: ['Which angle is formed by the sides AB and BC? Is that the angle that is given?'], level: 1, type: 'mcq',
         q: 'In $\\triangle ABC$ and $\\triangle XYZ$, $AB = XY$, $BC = YZ$ and $\\angle BAC = \\angle YXZ$. Kelvin writes "$\\triangle ABC \\cong \\triangle XYZ$ (SAS)". Which comment is correct?',
         options: ['Kelvin is correct.', 'Kelvin is wrong: ∠BAC is not between AB and BC, so this is SSA, which does not prove congruence.', 'Kelvin is wrong: the reason should be ASA.', 'Kelvin is wrong: the reason should be RHS.'],
         ans: 1,
@@ -253,7 +253,7 @@
         sol: [{ t: 'In $\\triangle ABD$ and $\\triangle ACD$,' }, { s: 'BD = CD', r: 'given' }, { s: '∠ADB = ∠ADC = 90°', r: 'given' }, { s: 'AD = AD', r: 'common side' }, { s: '∴ △ABD ≅ △ACD', r: 'SAS' }],
       },
       {
-        id: '52-8', level: 1, type: 'mcq',
+        id: '52-8', hints: ['Which side joins B and C? Is that the side that is given?'], level: 1, type: 'mcq',
         q: 'In $\\triangle ABC$ and $\\triangle XYZ$, $\\angle ABC = \\angle XYZ$, $\\angle BCA = \\angle YZX$ and $AB = XY$. Which condition proves $\\triangle ABC \\cong \\triangle XYZ$?',
         options: ['ASA', 'AAS', 'SAS', 'SSA'],
         ans: 1,
@@ -263,7 +263,7 @@
         sol: ['$AB$ is not between $\\angle ABC$ and $\\angle BCA$ (the side between them is $BC$), so the condition is <b>AAS</b>.'],
       },
       {
-        id: '52-9', level: 1, type: 'mcq',
+        id: '52-9', hints: ['Imagine enlarging one triangle on a photocopier: the angles stay the same, but does the size?'], level: 1, type: 'mcq',
         q: 'Two triangles both have angles $40^\\circ$, $60^\\circ$ and $80^\\circ$. Must they be congruent?',
         options: ['Yes, by AAA.', 'No — they have the same shape, but they may have different sizes.', 'Yes, by ASA.', 'Only if they are right-angled triangles.'],
         ans: 1,

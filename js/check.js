@@ -7,7 +7,13 @@ const CK = (() => {
     .replace(/angle/ig, '∠').replace(/triangle/ig, '△')
     .replace(/[<∡]/g, '∠').replace(/[Δ∆]/g, '△')
     .toUpperCase();
-  const alts = ans => String(ans).split('/');
+  // answers may be passed as an array of alternatives (preferred) or as one string
+  const alts = ans => (Array.isArray(ans) ? ans.map(String) : [String(ans)]);
+  // a number, or a simple fraction such as 1/2 or -3/4
+  const toNum = s => {
+    const m = String(s).match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+    return m ? Number(m[1]) / Number(m[2]) : Number(s);
+  };
 
   function side(inp, ans) {
     const s = norm(inp);
@@ -37,12 +43,13 @@ const CK = (() => {
     return { ok: false, hint: 'Write the angle like this: ∠ABC (the middle letter is the vertex).' };
   }
 
-  function num(inp, ans, tol = 0.051) {
+  // exact marking: 6.3 and 6.30 are right, 6.35 is wrong (tol only absorbs floating-point noise)
+  function num(inp, ans, tol = 1e-9) {
     const s = String(inp || '').replace(/[°˚º\s]|cm/gi, '').replace(/−/g, '-');
     if (!s) return { ok: false, empty: true };
-    const v = Number(s);
+    const v = toNum(s);
     if (!isFinite(v)) return { ok: false, hint: 'Type a number only (no units needed).' };
-    return { ok: alts(ans).some(a => Math.abs(v - Number(a)) <= tol), val: v };
+    return { ok: alts(ans).some(a => Math.abs(v - toNum(a)) <= tol), val: v };
   }
 
   function tri(inp, ans) {

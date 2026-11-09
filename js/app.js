@@ -35,6 +35,7 @@
   function resolveQ(q) {
     if (q.gen) {
       const g = C5.gens[q.gen];
+      if (typeof g !== 'function') { console.warn('Unknown question generator:', q.gen); return { q: null, regen: null }; }
       const made = g();
       made.id = q.id; made.random = true;
       return { q: made, regen: () => { const m = g(); m.id = q.id; m.random = true; return m; } };
@@ -195,6 +196,7 @@
       app.append(head);
       items.forEach((item, i) => {
         const { q, regen } = resolveQ(item);
+        if (!q) return;
         const c = QR.card(q, {
           num: i + 1, done: Store.isOk(id, item.id), regen,
           onResult: (ok, first, earned) => { if (ok && earned) Store.ok(id, item.id); if (ok && first) Store.first(id, item.id); upd(); },
@@ -242,29 +244,48 @@
     app.append(U.el('p', { text: `10 questions drawn at random from a pool of ${C5.challenge.length} (Sections 5.1–5.4). Choose how you want to do them.` }));
     const area = U.el('div');
     const resumeBox = U.el('div');
-    const fmt = s => Math.floor(s / 60) + ':' + String(Math.max(0, s) % 60).padStart(2, '0');
+    const fmt = s => { const t = Math.max(0, Math.round(s)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
     app.append(resumeBox, U.el('div', { class: 'btn-row' },
       U.el('button', { type: 'button', class: 'btn', text: 'Practice mode (untimed)', onclick: () => start(false) }),
       U.el('button', { type: 'button', class: 'btn ghost', text: 'Test mode (35 min)', onclick: () => start(true) })),
       U.el('p', { class: 'small muted', text: 'Practice mode: check each answer as you go, with hints. Test mode: no hints, marks shown at the end — like a real test. Your test answers and the time are saved on this device, so a refresh will not lose them.' }), area);
-    let timer = null;
-    cleanup = () => { if (timer) clearInterval(timer); };
-    const saved = Store.getTest();
-    if (saved) {
-      const left = Math.round((saved.ends - Date.now()) / 1000);
+    let timer = null, resumeTimer = null;
+    cleanup = () => { if (timer) clearInterval(timer); if (resumeTimer) clearInterval(resumeTimer); };
+    // A saved test (from an earlier visit or a refresh): a card with a live countdown.
+    // It stays visible while the student uses Practice mode, so the saved test is never hidden.
+    function showResume() {
+      const saved = Store.getTest();
+      if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
+      U.clear(resumeBox);
+      if (!saved || !Array.isArray(saved.qs) || !saved.qs.length) { if (saved) Store.setTest(null); return; }
+      const msg = U.el('p');
+      const go = U.el('button', { type: 'button', class: 'btn', onclick: () => start(true, saved) });
+      const tick = () => {
+        const left = Math.round((saved.ends - Date.now()) / 1000);
+        if (left > 0) { msg.textContent = `${fmt(left)} left. Your answers so far are saved.`; go.textContent = 'Resume the test'; }
+        else { msg.textContent = 'The time is up. Your answers were saved — see your mark.'; go.textContent = 'See my mark'; clearInterval(resumeTimer); resumeTimer = null; }
+      };
       resumeBox.append(U.el('div', { class: 'tip' },
-        U.el('div', { class: 'tip-title', text: 'You have a test in progress' }),
-        U.el('p', { text: left > 0 ? `${fmt(left)} left. Your answers so far are saved.` : 'The time is up. You can still see your mark.' }),
-        U.el('div', { class: 'btn-row' },
-          U.el('button', { type: 'button', class: 'btn', text: left > 0 ? 'Resume the test' : 'See my mark', onclick: () => { U.clear(resumeBox); start(true, saved); } }),
-          U.el('button', { type: 'button', class: 'btn ghost', text: 'Discard it', onclick: () => { if (confirm('Discard your saved test?')) { Store.setTest(null); U.clear(resumeBox); } } }))));
+        U.el('div', { class: 'tip-title', text: 'You have a test in progress' }), msg,
+        U.el('div', { class: 'btn-row' }, go,
+          U.el('button', { type: 'button', class: 'btn ghost', text: 'Discard it', onclick: () => { if (confirm('Discard your saved test without marking it?')) { Store.setTest(null); showResume(); } } }))));
+      tick();
+      resumeTimer = setInterval(tick, 1000);
     }
+    showResume();
     function start(test, resume) {
-      if (test && !resume && Store.getTest() && !confirm('Start a new test? Your saved test will be discarded.')) return;
+      const saved = Store.getTest();
+      if (test && !resume && saved) {
+        const expired = saved.ends <= Date.now();
+        const ask = expired ? 'Your saved test has run out of time but has not been marked yet. Start a new test and discard it?' : 'Start a new test? Your saved test will be discarded.';
+        if (!confirm(ask)) return;
+      }
       if (timer) clearInterval(timer);
-      U.clear(area); U.clear(resumeBox);
-      const qs = resume ? resume.qs : U.shuffle(C5.challenge).slice(0, 10).map(item => resolveQ(item).q);
+      U.clear(area);
+      if (test) { if (resumeTimer) clearInterval(resumeTimer); resumeTimer = null; U.clear(resumeBox); }
+      const qs = resume ? resume.qs : U.shuffle(C5.challenge).map(item => resolveQ(item).q).filter(Boolean).slice(0, 10);
       const run = test ? (resume || { qs, ends: Date.now() + 35 * 60 * 1000, states: [] }) : null;
+      if (run && !Array.isArray(run.states)) run.states = [];
       if (test) Store.setTest(run);
       const cards = [];
       let score = 0;
@@ -281,7 +302,7 @@
         });
         cards.push(c);
         area.append(c.node);
-        if (test && run.states[i]) c.restore(run.states[i]);
+        if (test && run.states[i]) { try { c.restore(run.states[i]); } catch (e) { run.states[i] = null; } }
       });
       if (test) {
         const tEl = U.el('span', { class: 'timer' });
