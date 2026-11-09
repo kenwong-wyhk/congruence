@@ -114,6 +114,13 @@ const G = (() => {
         const c0 = centroid(arr);
         const at = d.at || V.add(c0, d.shift || [0, 0]);
         arr = arr.map(p => V.add(V.sub(p, c0), at));
+        // never let the copy touch the original: if their boxes (plus room for labels) overlap, push the copy right
+        const box = a => [Math.min(...a.map(p => p[0])), Math.min(...a.map(p => p[1])), Math.max(...a.map(p => p[0])), Math.max(...a.map(p => p[1]))];
+        const s = box(src), c = box(arr), gap = d.gap != null ? d.gap : 52;
+        if (c[0] < s[2] + gap && c[2] > s[0] - gap && c[1] < s[3] + gap && c[3] > s[1] - gap) {
+          const dx = s[2] + gap - c[0];
+          arr = arr.map(p => [p[0] + dx, p[1]]);
+        }
       }
       [...d.dst].forEach((L, i) => { pts[L] = arr[i]; });
     });

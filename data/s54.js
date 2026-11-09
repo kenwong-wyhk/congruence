@@ -277,7 +277,7 @@
     const x = ang[3];
     return {
       q: `In the figure, $${S1} \\cong ${S2}$. Find $x$ and $y$.`,
-      fig: { w: 340, h: 190, make: [{ tri: L1, shape: shp.pts, box: [5, 20, 130, 150] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [275, 95] }], polys: [L1, L2], at, st, arcR: 13, pad: 36 },
+      fig: { w: 420, h: 210, make: [{ tri: L1, shape: shp.pts, box: [5, 15, 175, 180] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [330, 105] }], polys: [L1, L2], at, st, arcR: 13, pad: 36 },
       lines: [`$x = $ [[num:${x}]]°`, `$y = $ [[num:${s0}]]`],
       wrongs: [0, 1, 2].map(i => ({ tok: 0, val: ang[i], hint: `x is at ${L2[3]}, which matches ${L1[3]} — the angle that is not marked. Use the angle sum of a quadrilateral (360°).`, trap: 'anglesum' })),
       hints: [`Read the statement: ${[0, 1, 2, 3].map(i => S1[i] + ' ↔ ' + S2[i]).join(', ')}.`, 'The angles of a quadrilateral add up to 360°.'],
