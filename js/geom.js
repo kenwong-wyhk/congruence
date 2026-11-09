@@ -226,6 +226,27 @@ const G = (() => {
         mk('path', { d: s.d, class: 'mark', stroke: col(n), 'stroke-width': 1.6 }, gMark);
       }
     }
+    // Where an angle's label goes (distance r along the bisector) and how big its plain arc is.
+    // The label sits just outside its arc. In a narrow angle the label must move out to fit in the wedge,
+    // so the arc grows with it and stays right next to its label.
+    function angleLayout(k) {
+      const A = pts[k[0]], B = pts[k[1]], C = pts[k[2]];
+      const u = V.unit(V.sub(A, B)), v = V.unit(V.sub(C, B));
+      let bis = V.add(u, v);
+      bis = V.len(bis) < 1e-3 ? V.perp(u) : V.unit(bis);
+      const half = Math.acos(Math.max(-1, Math.min(1, V.dot(u, v)))) / 2;
+      const n = (spec.arcs || {})[k] || (spec.arcs || {})[k[2] + k[1] + k[0]] || 1;
+      const t = spec.at[k], hw = t.length * 3.4, hh = 7;
+      const p = V.perp(bis);
+      const along = Math.abs(bis[0]) * hw + Math.abs(bis[1]) * hh;   // label half-size along the bisector
+      const across = Math.abs(p[0]) * hw + Math.abs(p[1]) * hh;      // and across it
+      const outer = arcR + (n - 1) * 4;
+      const fit = half < 1.2 ? (across * 0.6 + 2) / Math.tan(half) : 0;
+      let r = Math.max(outer + 3 + along, fit);
+      if (spec.atPos && spec.atPos[k]) r = Math.max(spec.atPos[k], outer + 3 + along);
+      r = Math.min(r, 80);
+      return { bis, r, arc: Math.max(arcR, r - along - 4 - (n - 1) * 4) };
+    }
     // classic single arc for every angle that has a value or letter written in it
     // (skipped if the angle already has equal-angle marks or a right-angle square; turn off with noAutoArc)
     if (!spec.noAutoArc) {
@@ -235,7 +256,7 @@ const G = (() => {
         if (has(spec.arcs, k) || rightSet.has(angKey(k))) continue;
         const A = pts[k[0]], B = pts[k[1]], C = pts[k[2]];
         if (!A || !B || !C) continue;
-        mk('path', { d: sectorPath(B, A, C, arcR).d, class: 'mark', stroke: 'var(--ink)', 'stroke-width': 1.3 }, gMark);
+        mk('path', { d: sectorPath(B, A, C, angleLayout(k).arc).d, class: 'mark', stroke: 'var(--ink)', 'stroke-width': 1.3 }, gMark);
       }
     }
     // right-angle marks
@@ -267,19 +288,9 @@ const G = (() => {
     }
     // text inside angles
     for (const k in spec.at || {}) {
-      const A = pts[k[0]], B = pts[k[1]], C = pts[k[2]];
-      if (!A || !B || !C) continue;
-      const u = V.unit(V.sub(A, B)), v = V.unit(V.sub(C, B));
-      let bis = V.add(u, v);
-      bis = V.len(bis) < 1e-3 ? V.perp(u) : V.unit(bis);
-      const half = Math.acos(Math.max(-1, Math.min(1, V.dot(u, v)))) / 2;
-      const n = (spec.arcs || {})[k] || (spec.arcs || {})[k[2] + k[1] + k[0]] || 1;
-      let r = arcR + (n - 1) * 4 + 12;
-      if (half < 0.4) r = Math.min(r / Math.sin(half) * 0.45, 70);
-      if (spec.atPos && spec.atPos[k]) r = spec.atPos[k];
-      // keep the whole label clear of its arc (wide labels such as 106° need more room)
-      const t = spec.at[k], halfDiag = Math.hypot(t.length * 3.4, 7);
-      r = Math.max(r, arcR + (n - 1) * 4 + 3 + halfDiag);
+      const B = pts[k[1]];
+      if (!pts[k[0]] || !B || !pts[k[2]]) continue;
+      const { bis, r } = angleLayout(k);
       const pos = V.add(B, V.mul(bis, r));
       mk('text', { x: f2(pos[0]), y: f2(pos[1]), class: 'txt' + (isVar(spec.at[k]) ? ' var' : '') }, gTxt).textContent = spec.at[k];
     }
