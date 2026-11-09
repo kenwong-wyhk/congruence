@@ -39,6 +39,7 @@ data/               the content — edit these to change questions
   sheet.js          printable revision sheet
 vendor/katex/       KaTeX (maths typesetting, MIT licence) — served from the site itself
 tools/stamp_versions.py   refreshes the ?v= tags in index.html (run automatically by the git hook)
+tools/site-checks.js      browser checks to run before publishing (see ../PLAYBOOK.md, section 6)
 .githooks/pre-commit      runs the script before every commit
 favicon.svg, icon-180.png, preview.png   tab icon, phone home-screen icon, link-preview image
 ```
