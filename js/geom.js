@@ -285,10 +285,29 @@ const G = (() => {
         let nn = V.perp(V.unit(V.sub(B, A)));
         const c = polyCentroidFor(k[0], k[1]);
         if (V.dot(nn, V.sub(M, c)) < 0) nn = V.mul(nn, -1);
-        if ((spec.stIn || []).includes(k)) nn = V.mul(nn, -1);
-        const t = spec.st[k];
-        const off = 6 + Math.abs(nn[0]) * t.length * 3.3 + Math.abs(nn[1]) * 6;
-        pos = V.add(M, V.mul(nn, off));
+        const t = spec.st[k], hw = t.length * 3.3, hh = 7;
+        const place = n => V.add(M, V.mul(n, 6 + Math.abs(n[0]) * hw + Math.abs(n[1]) * 6));
+        if ((spec.stIn || []).includes(k)) pos = place(V.mul(nn, -1));
+        else {
+          // try both sides; keep the preferred (outside) side unless it is crowded by other lines
+          const d = V.unit(V.sub(B, A));
+          const onLine = q => Math.abs(V.cross(d, V.sub(q, A))) < 1;
+          const others = [...segs.values()].filter(([p, q]) => !(onLine(pts[p]) && onLine(pts[q])));
+          const clearance = P => {
+            let best = Infinity;
+            others.forEach(([p, q]) => {
+              const a = pts[p], b = pts[q];
+              for (let i = 0; i <= 20; i++) {
+                const s = V.add(a, V.mul(V.sub(b, a), i / 20));
+                const dx = Math.max(0, Math.abs(s[0] - P[0]) - hw), dy = Math.max(0, Math.abs(s[1] - P[1]) - hh);
+                best = Math.min(best, Math.hypot(dx, dy));
+              }
+            });
+            return best;
+          };
+          const p1 = place(nn), p2 = place(V.mul(nn, -1));
+          pos = clearance(p1) >= Math.min(4, clearance(p2)) ? p1 : p2;
+        }
       }
       mk('text', { x: f2(pos[0]), y: f2(pos[1]), class: 'txt' + (isVar(spec.st[k]) ? ' var' : '') }, gTxt).textContent = spec.st[k];
     }
