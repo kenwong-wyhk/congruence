@@ -42,7 +42,13 @@ const EX = (() => {
       fig.clearHL();
       trs.forEach(tr => tr.classList.remove('active'));
       const st = ex.steps[i];
-      if (st && st.hl) { fig.highlight(hlList(st.hl)); trs[i].classList.add('active'); }
+      if (st && st.hl) {
+        const list = hlList(st.hl), cols = [...new Set(list.map(([, n]) => n))];
+        fig.highlight(list);
+        // the line's band takes the colour of the parts it lights (grey when it lights several colours)
+        trs[i].dataset.c = cols.length === 1 ? cols[0] : 'mix';
+        trs[i].classList.add('active');
+      }
     };
     trs.forEach((tr, i) => {
       if (ex.steps[i].hl) {

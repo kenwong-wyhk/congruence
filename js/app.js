@@ -139,6 +139,7 @@
         U.el('div', { class: 'ttl', text: s.title }),
         U.el('div', { class: 'meta', html: TEX.render(s.blurb || '') }),
         s.noTest ? U.el('div', { class: 'small' }, U.el('span', { class: 'badge', text: 'Not in test/exam' })) : '',
+        s.live ? U.el('div', { class: 'meta', text: 'Live version for class on the section page.' }) : '',
         p.y ? U.el('div', { class: 'meta', text: `${p.x}/${p.y} practice solved · ${p.f} first try` }) : '',
         p.y ? U.el('div', { class: 'bar' }, U.el('span', { style: `width:${pct}%` })) : ''));
     });
@@ -174,6 +175,7 @@
     Store.seen(id, tab);
     app.append(U.el('div', { class: 'crumbs' }, U.el('a', { href: '#/', text: 'Home' }), ' / Section ' + id));
     app.append(U.el('h1', { text: id + ' ' + s.title }));
+    if (s.live) app.append(U.el('p', { class: 'small' }, U.el('a', { href: s.live, text: 'Live version ▸' }), ' The step-by-step screens shown in class, one idea at a time.'));
     if (s.noTest) app.append(U.el('div', { class: 'note', text: s.noTestNote || 'Not in the test or exam. It is here to show how these drawings work — enjoy!' }));
     const p = progress(id);
     if (p.y) app.append(U.el('div', { class: 'small muted', text: `${p.x}/${p.y} practice questions solved (${p.f} on the first try) on this device` }));

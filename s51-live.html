@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.1 Congruent Triangles Live</title>
+<meta name="description" content="Live version of F2 Ch5 section 5.1, for teaching from the front of the room.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- everything is served from this site: no third-party requests -->
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="live/live.css">
+<style>
+/* Styles for this lesson only. Shared styles live in live/live.css. */
+:root {
+  --gold: #b96e2b; --rule-grey: #808285; --blue-tint: #eef3fa; --blue-tint-2: #dbe6f4;
+  /* corresponding-part colours, as on the reading site: lines and fills only, never text */
+  --c1: var(--blue); --c2: var(--red); --c3: var(--gold);
+  --font-body: var(--font-sans);
+}
+.katex { font-size: 1.08em; }
+.nobr { white-space: nowrap; }
+.foot .where { font-size: 1rem; font-weight: 400; color: var(--ink-muted); letter-spacing: .04em; white-space: nowrap; }
+
+/* Figures drawn by the site's own figure engine (js/geom.js) */
+.fig { display: block; width: 100%; height: auto; margin: 0 auto; max-width: none !important; }
+.fig .seg { stroke: var(--ink); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+.fig .poly-fill { fill: none; }
+.fig .lbl { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 15px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+.fig .txt { font-family: var(--font-sans); font-weight: 400; font-size: 12px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+.fig .txt.var { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 14px; }
+.fig .mark { fill: none; stroke-width: 1.5; }
+.fig .dot { fill: var(--ink); }
+.fig .hl { opacity: .28; }
+.fig .hl-line { stroke-width: 10; stroke-linecap: round; fill: none; }
+.fig g.tri-g { transition: transform 1s var(--ease); }
+.split-fig .lbl.own, .split-fig .lbl.joined { transition: opacity .4s; }
+.split-fig .lbl.own { opacity: 0; }
+.split-fig.apart .lbl.own { opacity: 1; transition-delay: .5s; }
+.split-fig.apart .lbl.joined { opacity: 0; }
+.figbox { min-width: 0; }
+.figbox .fig { max-height: 58vh; }
+.figbox.small .fig { max-height: 40vh; }
+.layer { display: grid; }
+.layer > * { grid-area: 1 / 1; }
+.modes > [data-layer] { opacity: 0; transition: opacity .6s var(--ease); }
+.modes[data-mode="0"] > [data-layer="0"], .modes[data-mode="1"] > [data-layer="1"],
+.modes[data-mode="2"] > [data-layer="2"], .modes[data-mode="3"] > [data-layer="3"] { opacity: 1; }
+.modes .fig .hl { opacity: .34; }
+.modes .fig .hl-line { stroke-width: 9; }
+
+/* Two columns: figure and words */
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3.5rem; align-items: center; }
+.pair.wide-fig { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+.pair.wide-proof { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+.tight .proof-group { font-size: 1.25rem; }
+.tight table.proof td { padding-top: .1rem; padding-bottom: .1rem; }
+.tight .figbox .fig { max-height: 40vh; }
+.tight .stack { gap: .8rem; }
+#fit0Svg { max-height: 34vh; }
+#fitSvg { max-height: 44vh; }
+#orderSvg { max-height: 36vh; }
+.q { font-size: 1.75rem; line-height: 1.4; margin: 0; }
+.stack { display: flex; flex-direction: column; gap: 1.2rem; }
+.rows .row:first-child { border-top: 0.07rem solid var(--frame); }
+
+/* Proof lines (built by the site's proofTable, so the equals signs align as on the reading site) */
+.proof-group { font-size: 1.45rem; }
+table.proof { border-collapse: collapse; width: auto; font-size: inherit; font-variant-numeric: normal; }
+table.proof td { padding: .2rem .5rem; border: 0; text-align: left; vertical-align: middle; }
+table.proof td.s { white-space: nowrap; }
+table.proof td.s-l { text-align: right; padding-right: 0; }
+table.proof td.s-r { padding-left: .28em; }
+table.proof td.r { border-left: 0.07rem solid var(--ink); font-size: 1.15rem; font-weight: 400; min-width: 10em; padding-left: .9rem; white-space: nowrap; }
+table.proof tr.text td { padding-top: .7rem; font-weight: 400; }
+table.proof tr[data-step] { transform: none; }
+/* the current line: a light tint of its highlight colour (each is the pair colour at 20% on white) */
+table.proof tr.now td { background: #ececed; }
+table.proof tr.now[data-c="1"] td { background: #ccdaeb; }
+table.proof tr.now[data-c="2"] td { background: #f7cccf; }
+table.proof tr.now[data-c="3"] td { background: #f1e2d5; }
+
+/* Answer blanks and option buttons */
+.blank { display: inline-block; width: 4.2em; border-bottom: 0.1rem solid var(--ink); margin: 0 .2em; vertical-align: -0.2em; }
+.fills { display: grid; grid-template-columns: repeat(3, auto); gap: .6rem 2.4rem; justify-content: start; font-size: 1.6rem; margin-top: .6rem; }
+.btn .opt { font-family: var(--font-display); margin-right: .6rem; }
+.choice.opts .btn { font-size: 1.4rem; padding: .4rem 1.1rem; }
+
+/* Blue answer scenes */
+.answers { display: grid; grid-template-columns: repeat(3, auto); gap: 1.1rem 4rem; justify-content: start; font-size: 2.6rem; }
+.answers.two-col { grid-template-columns: repeat(2, auto); }
+.blue .note { border-top-color: var(--white); }
+.blue .rule { border-top: 0.14rem solid var(--red); padding-top: 1rem; }
+
+/* Animated drawings */
+.status { height: 1.6em; margin: .3rem 0 0; font-weight: 400; color: var(--blue); font-size: 1.5rem; }
+#fitSvg text, #fit0Svg text { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; text-anchor: middle; dominant-baseline: central; }
+#orderSvg text { font-family: "Times New Roman", Times, serif; text-anchor: middle; }
+#orderSvg .it { font-style: italic; }
+.lines3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.lines3 .cap { font-size: 1.6rem; color: var(--ink); text-align: center; margin-top: .4rem; }
+.rules { display: flex; flex-direction: column; gap: 1.6rem; }
+.rules .r1 { display: grid; grid-template-columns: 4rem 1fr; gap: 1.5rem; align-items: baseline; border-top: 0.07rem solid var(--frame); padding-top: 1rem; }
+.rules .n { font-family: var(--font-display); font-size: 3rem; color: var(--blue); line-height: 1; }
+.rules p { margin: 0; font-size: 2.1rem; line-height: 1.3; }
+.rules .sub { font-size: 1.35rem; color: var(--ink-muted); margin-top: .3rem; }
+</style>
+</head>
+<!-- data-reading links back to the reading version (the 5.1 page of the self-study site). -->
+<body data-reading="index.html#/s/5.1">
+
+<!-- 1 Title -->
+<section class="scene blue title">
+  <span class="cross-v"></span><span class="cross-h"></span>
+  <div class="body">
+    <p class="kicker in" style="--i:5">F2 MATHEMATICS · CH5 CONGRUENCE · SECTION 5.1</p>
+    <h1 class="display huge in" style="--i:7">Congruent Triangles</h1>
+    <p class="in" style="--i:9">Same shape, same size, and which part matches which.</p>
+    <p class="kicker in" style="--i:14">Press → to begin</p>
+  </div>
+  <div class="foot bare"><h2></h2></div>
+</section>
+
+<!-- 2 Problem: which one fits? (prediction; the answer is on the next scene) -->
+<section class="scene">
+  <div class="body">
+    <p class="in" style="--i:1">Three triangles. You may slide, turn or flip the blue ones, but not stretch them.</p>
+    <div class="in" style="--i:2"><svg id="fit0Svg" viewBox="0 0 1000 440" role="img" aria-label="Triangle ABC in black, a larger triangle XYZ that is turned, and triangle PQR that is turned and flipped"></svg></div>
+    <p class="display big blue-text" data-step="1">Which blue triangle can fit exactly on $\triangle ABC$?</p>
+    <div class="btns choice" data-step="1"><button class="btn">$\triangle XYZ$</button><button class="btn">$\triangle PQR$</button><button class="btn">Both</button><button class="btn">Neither</button></div>
+    <p class="note" data-step="2">The next screen tries both. Has everyone chosen?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Do they fit?</h2></div>
+</section>
+
+<!-- 3 Reveal: the animation tries both -->
+<section class="scene" data-enter="fit">
+  <div class="body">
+    <div class="in" style="--i:1"><svg id="fitSvg" viewBox="0 0 1000 440" role="img" aria-label="Triangle XYZ is moved onto ABC and is too big; triangle PQR is slid, turned and flipped and fits exactly"></svg></div>
+    <div class="btns in" style="--i:2"><button class="btn" onclick="Live.replay('fit')">Play again</button><p class="status" id="fitStatus"></p></div>
+    <p class="display big blue-text" data-step="1">$\triangle ABC \cong \triangle PQR$</p>
+    <p data-step="1">$A \leftrightarrow P$, &nbsp;$B \leftrightarrow Q$, &nbsp;$C \leftrightarrow R$. Matching sides are drawn in the same colour.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Do they fit?</h2></div>
+</section>
+
+<!-- 4 Statement: what congruent means -->
+<section class="scene">
+  <div class="body">
+    <p class="display big blue-text narrow in" style="--i:1">Congruent means the same shape and the same size.</p>
+    <p data-step="1">One figure can be slid, turned or flipped so that it fits <strong>exactly</strong> on the other.</p>
+    <p data-step="2">We write $\cong$ and read it "is congruent to". Same shape but a different size is <strong>not</strong> congruent.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Congruent</h2></div>
+</section>
+
+<!-- 5 Definition: three sides and three angles -->
+<section class="scene">
+  <div class="body">
+    <div class="pair">
+      <!-- One layer per step: plain, sides lit, angles lit, all marks. The step shown picks the layer. -->
+      <div class="figbox layer modes in" style="--i:1" id="defFig" data-mode="0">
+        <div data-layer="0"></div><div data-layer="1"></div><div data-layer="2"></div><div data-layer="3"></div>
+      </div>
+      <div class="stack">
+        <p class="q in" style="--i:2">Two triangles are congruent if</p>
+        <p class="q" data-step="1" data-mode-step="1">1. the three pairs of <strong>corresponding sides</strong> are equal, and</p>
+        <p class="q" data-step="2" data-mode-step="2">2. the three pairs of <strong>corresponding angles</strong> are equal.</p>
+        <p class="note" data-step="3" data-mode-step="3">Same marks show corresponding parts. If any one pair is not equal, the triangles are not congruent.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Definition</h2></div>
+</section>
+
+<!-- 6 The order of the letters (animation) -->
+<section class="scene" data-enter="order">
+  <div class="body">
+    <p class="in" style="--i:1">The order of the letters tells you which vertex matches which.</p>
+    <div class="in" style="--i:2"><svg id="orderSvg" viewBox="0 0 1000 300" role="img" aria-label="The statement triangle ABC is congruent to triangle XYZ; the pairs A and X, B and Y, C and Z move out of it in turn"></svg></div>
+    <div class="btns in" style="--i:3"><button class="btn" onclick="Live.replay('order')">Play again</button></div>
+    <p data-step="1">1st letter ↔ 1st letter, 2nd ↔ 2nd, 3rd ↔ 3rd. These are <strong>corresponding vertices</strong>.</p>
+    <p data-step="2">So $\triangle ABC \cong \triangle XZY$ is a different statement: there, $B \leftrightarrow Z$ and $C \leftrightarrow Y$.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Reading the statement</h2></div>
+</section>
+
+<!-- 7 Properties and their reasons -->
+<section class="scene">
+  <div class="body">
+    <p class="display big blue-text in" style="--i:1">If $\triangle ABC \cong \triangle XYZ$, then</p>
+    <div class="row" data-step="1"><div class="who">Sides</div><div><p class="q">$AB = XY$, &nbsp;$BC = YZ$, &nbsp;$CA = ZX$</p><p class="muted">Reason: <strong>corr. sides, ≅ △s</strong></p></div></div>
+    <div class="row" data-step="2"><div class="who">Angles</div><div><p class="q">$\angle BAC = \angle YXZ$, &nbsp;$\angle ABC = \angle XYZ$, &nbsp;$\angle BCA = \angle YZX$</p><p class="muted">Reason: <strong>corr. ∠s, ≅ △s</strong></p></div></div>
+    <p class="note" data-step="3">Every line of working carries its reason, written exactly like this.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Properties</h2></div>
+</section>
+
+<!-- 8 Full angle names: the question -->
+<section class="scene">
+  <div class="body">
+    <div class="pair">
+      <div class="figbox in" style="--i:1" id="nameFig"></div>
+      <div class="stack">
+        <p class="display big blue-text in" style="--i:2">Which angle is $\angle B$?</p>
+        <p class="in" style="--i:3">Point to it on the screen.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Full angle names</h2></div>
+</section>
+
+<!-- 9 Full angle names: the answer -->
+<section class="scene">
+  <div class="body">
+    <p class="in" style="--i:1">Three angles meet at $B$, so "$\angle B$" could be any of them.</p>
+    <div class="lines3">
+      <div class="in" style="--i:2"><div class="figbox small" id="nameFig1"></div><p class="cap">$\angle ABD$</p></div>
+      <div class="in" style="--i:3"><div class="figbox small" id="nameFig2"></div><p class="cap">$\angle DBC$</p></div>
+      <div class="in" style="--i:4"><div class="figbox small" id="nameFig3"></div><p class="cap">$\angle ABC$</p></div>
+    </div>
+    <p class="display big blue-text" data-step="1">Always use three letters, vertex in the middle.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Full angle names</h2></div>
+</section>
+
+<!-- 10 Work: quick check, letters only -->
+<section class="scene">
+  <div class="body rows">
+    <div class="row in" style="--i:1"><div><div class="who">Alone</div><button class="timer" data-sec="180"></button></div>
+      <div><p class="q">$\triangle DEF \cong \triangle QRP$. Complete:</p>
+      <div class="fills"><span>$DE = $<span class="blank"></span></span><span>$EF = $<span class="blank"></span></span><span>$DF = $<span class="blank"></span></span><span>$\angle DEF = $<span class="blank"></span></span><span>$\angle EFD = $<span class="blank"></span></span></div></div>
+    </div>
+    <div class="row" data-step="1"><div><div class="who">Choose</div></div>
+      <div><p class="q">If $\triangle KLM \cong \triangle STR$, which may <strong>not</strong> be true?</p>
+      <div class="btns choice opts" style="margin-top:.7rem"><button class="btn"><span class="opt">A</span>$KM = SR$</button><button class="btn"><span class="opt">B</span>$LM = TR$</button><button class="btn"><span class="opt">C</span>$\angle LKM = \angle TSR$</button><button class="btn"><span class="opt">D</span>$\angle KML = \angle RST$</button></div></div>
+    </div>
+    <p class="note" data-step="2">The next screen shows the answers. Is every blank filled and a letter chosen?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Quick check</h2></div>
+</section>
+
+<!-- 11 Reveal: quick check answers -->
+<section class="scene blue">
+  <div class="body">
+    <p class="kicker in" style="--i:1">$D \leftrightarrow Q$, &nbsp;$E \leftrightarrow R$, &nbsp;$F \leftrightarrow P$</p>
+    <div class="answers">
+      <span class="in" style="--i:2">$DE = QR$</span><span class="in" style="--i:3">$EF = RP$</span><span class="in" style="--i:4">$DF = QP$</span>
+      <span class="in" style="--i:5">$\angle DEF = \angle QRP$</span><span class="in" style="--i:6">$\angle EFD = \angle RPQ$</span>
+    </div>
+    <div class="rule" data-step="1">
+      <p class="display big">The answer is D.</p>
+      <p>$K \leftrightarrow S$, $L \leftrightarrow T$, $M \leftrightarrow R$. The vertex of $\angle KML$ is $M$, which matches $R$, so $\angle KML = \angle SRT$.</p>
+    </div>
+  </div>
+  <div class="foot"><h2>5.1 | Quick check answers</h2></div>
+</section>
+
+<!-- 12 Worked example, done together -->
+<section class="scene" id="ex1">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="stack">
+        <p class="q in" style="--i:1">$\triangle PQR \cong \triangle XYZ$. Find $x$, $y$ and $z$.</p>
+        <div class="figbox in" style="--i:2" id="ex1Fig"></div>
+      </div>
+      <div class="in" style="--i:3" id="ex1Proof"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Together</h2></div>
+</section>
+
+<!-- 13 Example: a turned triangle (students try) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">$\triangle ABC \cong \triangle PRQ$. Find $x$ and $y$.</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="120"></button></div><p>Write each line with its reason.</p></div>
+        <p data-step="1"><strong>Hint.</strong> The copy is turned. Do not match by position in the picture: read the letters of the statement.</p>
+        <p class="note" data-step="2">The next screen shows the solution. Are both answers written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Turned figures</h2></div>
+</section>
+
+<!-- 14 Solution: the turned triangle -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2Fig"></div>
+      <div class="stack">
+        <p class="kicker in" style="--i:2">$A \leftrightarrow P$, &nbsp;$B \leftrightarrow R$, &nbsp;$C \leftrightarrow Q$</p>
+        <div id="ex2Proof"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Turned figures: solution</h2></div>
+</section>
+
+<!-- 15 Team task: flipped, with an unmarked angle -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="stack">
+        <p class="q in" style="--i:1">$\triangle ABC \cong \triangle DFE$. Find $x$, $y$ and $z$.</p>
+        <div class="figbox in" style="--i:2" id="t1FigQ"></div>
+      </div>
+      <div class="rows">
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="120"></button></div><p>Find $x$, $y$ and $z$, with reasons.</p></div>
+        <div class="row" data-step="1"><div><div class="who">Team</div><button class="timer" data-sec="180"></button></div><p>Compare. Agree on one answer for each.</p></div>
+        <div class="row" data-step="2"><div><div class="who">Commit</div></div>
+          <div><p>Our $x$ is</p><div class="btns choice" style="margin-top:.6rem"><button class="btn">$45^\circ$</button><button class="btn">$53^\circ$</button><button class="btn">$82^\circ$</button><button class="btn">something else</button></div></div></div>
+        <p class="note" data-step="3">The next screen shows the solution. Has every team committed?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Team task</h2></div>
+</section>
+
+<!-- 16 Solution: team task -->
+<section class="scene">
+  <div class="body tight">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="t1Fig"></div>
+      <div class="stack">
+        <p class="kicker in" style="--i:2">$A \leftrightarrow D$, &nbsp;$B \leftrightarrow F$, &nbsp;$C \leftrightarrow E$</p>
+        <div id="t1Proof"></div>
+        <p class="note" data-step="10">The trap: $x \ne 53^\circ$. $x$ is at $F$, which matches $B$, and $\angle ABC$ is not marked. Find it first with the angle sum.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Team task: solution</h2></div>
+</section>
+
+<!-- 17 Harder: split the figure (pairs) -->
+<section class="scene" id="ex3">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex3Split"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">$AED$ and $BEC$ are straight lines, $\angle ABE = 90^\circ$ and $\triangle ABE \cong \triangle DCE$. Find</p>
+        <p class="q in" style="--i:3">(a) $\angle AEB$, &nbsp;&nbsp;(b) $AD$.</p>
+        <div class="row in" style="--i:4"><div><div class="who">Pairs</div><button class="timer" data-sec="240"></button></div><p>Work it out together, every line with a reason.</p></div>
+        <p data-step="1" id="ex3Hint"><strong>Hint.</strong> Split the figure into $\triangle ABE$ and $\triangle DCE$.</p>
+        <p class="note" data-step="2">The next screen shows the solution to (a). Are both parts written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Harder</h2></div>
+</section>
+
+<!-- 18 Solution (a) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-proof">
+      <div class="figbox in" style="--i:1" id="ex3FigA"></div>
+      <div id="ex3ProofA"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Harder: solution (a)</h2></div>
+</section>
+
+<!-- 19 Solution (b) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-proof">
+      <div class="figbox in" style="--i:1" id="ex3FigB"></div>
+      <div id="ex3ProofB"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Harder: solution (b)</h2></div>
+</section>
+
+<!-- 20 Summary -->
+<section class="scene">
+  <div class="body">
+    <div class="rules">
+      <div class="r1 in" style="--i:1"><span class="n">1</span><div><p>Read the letters, not the picture.</p><p class="sub">$\triangle ABC \cong \triangle PRQ$: 1st ↔ 1st, 2nd ↔ 2nd, 3rd ↔ 3rd, however the copy is turned or flipped.</p></div></div>
+      <div class="r1" data-step="1"><span class="n">2</span><div><p>Name every angle with three letters.</p><p class="sub">$\angle ABC$, never $\angle B$.</p></div></div>
+      <div class="r1" data-step="2"><span class="n">3</span><div><p>Give every line its reason.</p><p class="sub"><strong>corr. sides, ≅ △s</strong> &nbsp;·&nbsp; <strong>corr. ∠s, ≅ △s</strong> &nbsp;·&nbsp; <strong>∠ sum of △</strong> for an angle that is not marked.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.1 | Today</h2></div>
+</section>
+
+<!-- 21 After class -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display huge in" style="--i:1">After class</p>
+    <p class="in" style="--i:2">On the self-study site, section 5.1: <strong>Practice</strong> (8 questions, one with new numbers each time) and <strong>Traps</strong>.</p>
+    <p class="in" style="--i:3">Then the <strong>Correspondence Game</strong>, levels L0 to L2, and the Speed Round.</p>
+    <p class="kicker in" style="--i:5">NEXT: 5.2 CONDITIONS FOR CONGRUENT TRIANGLES</p>
+  </div>
+  <div class="foot"><h2>5.1 | Practise</h2></div>
+</section>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/geom.js"></script>
+<script src="js/check.js"></script>
+<script src="js/question.js"></script>
+<script src="live/live.js"></script>
+<script>
+'use strict';
+/* ---------- 1. Maths: render every $...$ before anything is built or bound ---------- */
+// Punctuation straight after maths is kept with it, so a line never starts with a lone "." or "?".
+document.querySelectorAll('.scene').forEach(s => {
+  s.innerHTML = TEX.render(s.innerHTML.replace(/(\$[^$]+\$)([.,;:?!])/g, '<span class="nobr">$1$2</span>'));
+});
+
+/* ---------- 2. Helpers ---------- */
+const $ = id => document.getElementById(id);
+const C = n => 'var(--c' + n + ')';
+// Call fn(shown) now and whenever el gains or loses the "shown" class (a step press, or back).
+function onShown(el, fn) {
+  fn(el.classList.contains('shown'));
+  new MutationObserver(() => fn(el.classList.contains('shown'))).observe(el, { attributes: true, attributeFilter: ['class'] });
+}
+function figInto(id, spec, hl) {
+  const f = G.draw(spec);
+  if (hl) f.highlight(hl);
+  $(id).append(f.svg);
+  return f;
+}
+// [['PQR','XYZ',1]] -> [['PQR',1],['XYZ',1]]
+function hlList(hl) {
+  const out = [];
+  (hl || []).forEach(h => { const n = typeof h[h.length - 1] === 'number' ? h[h.length - 1] : 1; h.forEach(p => { if (typeof p === 'string') out.push([p, n]); }); });
+  return out;
+}
+/* A worked solution: proof lines appear one per press; the figure highlights the parts of the
+   latest line that names some. firstStep lets fixed lines show from the start (0). */
+function solution(figId, proofId, spec, steps, firstStep) {
+  const fig = figInto(figId, spec);
+  const { table, trs } = QR.proofTable(steps, {}, [], { returnRows: true });
+  $(proofId).append(table);
+  let n = 0;
+  trs.forEach((tr, i) => {
+    if (steps[i].fixed) return;
+    n++;
+    tr.dataset.step = n;
+  });
+  // Only act when the latest highlighted line changes: marking a row "now" is itself a class
+  // change the observer sees, so an unconditional update would call itself for ever.
+  let current = null;
+  const update = () => {
+    let last = -1;
+    trs.forEach((tr, i) => { if (steps[i].hl && (steps[i].fixed || tr.classList.contains('shown'))) last = i; });
+    if (last === current) return;
+    if (current !== null && current >= 0) trs[current].classList.remove('now');
+    current = last;
+    fig.clearHL();
+    // The current line's band takes the colour of the parts it lights (blue, red or gold pair),
+    // so the line and the figure match. A line that lights parts in several colours gets a grey band.
+    if (last >= 0) {
+      const list = hlList(steps[last].hl), cols = [...new Set(list.map(([, n]) => n))];
+      fig.highlight(list);
+      trs[last].dataset.c = cols.length === 1 ? cols[0] : 'mix';
+      trs[last].classList.add('now');
+    }
+  };
+  trs.forEach(tr => { if (tr.dataset.step) new MutationObserver(update).observe(tr, { attributes: true, attributeFilter: ['class'] }); });
+  update();
+  return fig;
+}
+// The figure pulled apart into its triangles; returns a function that sets apart (true) or together.
+function splitFig(id, spec, tris, gap) {
+  const w = spec.w || 320, h = spec.h || 200, pad = 50;
+  const pts = G.resolve(spec);
+  const svg = G.mk('svg', { viewBox: `${-pad} ${-pad / 2} ${w + 2 * pad} ${h + pad}`, class: 'fig', role: 'img', 'aria-label': 'The figure, which the hint pulls apart into its two triangles' });
+  const allC = G.centroid(Object.values(pts));
+  const inTri = (t, k) => [...k].every(L => t.includes(L));
+  const filt = (obj, t) => { const o = {}; for (const k in obj || {}) if (inTri(t, k)) o[k] = obj[k]; return o; };
+  const groups = tris.map((t, i) => {
+    const sub = { w, h, polys: [t], ticks: filt(spec.ticks, t), arcs: filt(spec.arcs, t), rights: (spec.rights || []).filter(k => inTri(t, k)), st: filt(spec.st, t), at: filt(spec.at, t) };
+    const tp = {}; [...t].forEach(L => { tp[L] = pts[L]; });
+    const g = G.mk('g', { class: 'tri-g' }, svg);
+    const f = G.draw(sub, { pts: tp });
+    [...f.svg.childNodes].forEach(c => g.appendChild(c));
+    let d = G.V.sub(G.centroid([...t].map(L => pts[L])), allC);
+    if (G.V.len(d) < 6) d = i === 0 ? [-1, 0] : [1, 0];
+    return { g, off: G.V.mul(G.V.unit(d), gap || 46) };
+  });
+  // A vertex both triangles share (E here) gets a label from each triangle. Together, that would
+  // show it twice, so show the whole figure's single label then, and each triangle's own when apart.
+  const shared = Object.keys(pts).filter(L => tris.filter(t => t.includes(L)).length > 1);
+  groups.forEach(({ g }) => g.querySelectorAll('text.lbl').forEach(t => { if (shared.includes(t.textContent)) t.classList.add('own'); }));
+  const whole = G.draw(spec);
+  whole.svg.querySelectorAll('text.lbl').forEach(t => { if (shared.includes(t.textContent)) { t.classList.add('joined'); svg.appendChild(t); } });
+  svg.classList.add('split-fig');
+  $(id).append(svg);
+  return apart => {
+    svg.classList.toggle('apart', !!apart);
+    groups.forEach(({ g, off }) => { g.style.transform = apart ? `translate(${off[0].toFixed(1)}px, ${off[1].toFixed(1)}px)` : 'none'; });
+  };
+}
+
+/* ---------- 3. Figures (the same figures as the reading version, data/s51.js) ---------- */
+const DEF = { w: 340, h: 180, pts: { A: [60, 30], B: [20, 150], C: [150, 150], X: [230, 30], Y: [190, 150], Z: [320, 150] }, polys: ['ABC', 'XYZ'] };
+(function () {
+  const ticks = { AB: 1, XY: 1, BC: 2, YZ: 2, CA: 3, ZX: 3 }, arcs = { CAB: 1, ZXY: 1, ABC: 2, XYZ: 2, BCA: 3, YZX: 3 };
+  const box = $('defFig'), layers = box.querySelectorAll('[data-layer]');
+  const layer = (i, spec, hl) => { const f = G.draw(Object.assign({}, DEF, spec)); if (hl) f.highlight(hl); layers[i].append(f.svg); };
+  layer(0, {});
+  // step 1: the three pairs of sides lit in their pair colours, with their equal-side marks
+  layer(1, { ticks }, Object.keys(ticks).map(k => [k, ticks[k]]));
+  // step 2: the three pairs of angles lit, with their arcs (side marks stay, unlit)
+  layer(2, { ticks, arcs }, Object.keys(arcs).map(k => [k, arcs[k]]));
+  // step 3: all the marks, nothing lit
+  layer(3, { ticks, arcs });
+  const steps = [...document.querySelectorAll('[data-mode-step]')];
+  const update = () => {
+    let m = 0;
+    steps.forEach(p => { if (p.classList.contains('shown')) m = Math.max(m, +p.dataset.modeStep); });
+    if (box.dataset.mode !== String(m)) box.dataset.mode = m;
+  };
+  steps.forEach(p => new MutationObserver(update).observe(p, { attributes: true, attributeFilter: ['class'] }));
+  update();
+})();
+
+const NAME = { w: 320, h: 200, pts: { A: [120, 22], B: [24, 180], C: [296, 180] }, along: { D: ['A', 'C', 0.42] }, polys: ['ABC'], lines: ['BD'] };
+figInto('nameFig', NAME);
+figInto('nameFig1', Object.assign({ arcs: { ABD: 1 } }, NAME), [['ABD', 1]]);
+figInto('nameFig2', Object.assign({ arcs: { DBC: 1 } }, NAME), [['DBC', 1]]);
+figInto('nameFig3', Object.assign({ arcs: { ABC: 1 } }, NAME), [['ABC', 1]]);
+
+solution('ex1Fig', 'ex1Proof',
+  { w: 340, h: 165, pts: { P: [70, 25], Q: [20, 140], R: [150, 140], X: [240, 25], Y: [190, 140], Z: [320, 140] }, polys: ['PQR', 'XYZ'], at: { PQR: 'x', PRQ: 'y', XYZ: '66°', XZY: '55°' }, st: { QR: '8 cm', YZ: 'z cm' } },
+  [
+    { s: '∵ △PQR ≅ △XYZ' },
+    { s: '∴ ∠PQR = ∠XYZ', r: 'corr. ∠s, ≅ △s', hl: [['PQR', 'XYZ', 1]] },
+    { s: 'x = \\underline{\\underline{66°}}' },
+    { s: '∠PRQ = ∠XZY', r: 'corr. ∠s, ≅ △s', hl: [['PRQ', 'XZY', 2]] },
+    { s: 'y = \\underline{\\underline{55°}}' },
+    { s: 'YZ = QR', r: 'corr. sides, ≅ △s', hl: [['QR', 'YZ', 3]] },
+    { s: 'z = \\underline{\\underline{8}}' },
+  ]);
+
+const EX2 = { w: 340, h: 200, pts: { A: [20, 150], B: [160, 150], C: [55, 70] }, derive: [{ src: 'ABC', dst: 'PRQ', rot: 100, at: [262, 100] }], polys: ['ABC', 'PRQ'], at: { BAC: '66°', ABC: '37°', QPR: 'y' }, st: { AB: '5 cm', BC: '4.7 cm', PR: 'x cm' } };
+figInto('ex2FigQ', EX2);
+solution('ex2Fig', 'ex2Proof', EX2, [
+  { s: '∵ △ABC ≅ △PRQ' },
+  { s: '∴ PR = AB', r: 'corr. sides, ≅ △s', hl: [['AB', 'PR', 1]] },
+  { s: 'x = \\underline{\\underline{5}}' },
+  { s: '∠QPR = ∠CAB', r: 'corr. ∠s, ≅ △s', hl: [['CAB', 'QPR', 2]] },
+  { s: 'y = \\underline{\\underline{66°}}' },
+]);
+
+const T1 = { w: 340, h: 200, pts: { A: [20, 40], B: [40, 150], C: [160, 110] }, derive: [{ src: 'ABC', dst: 'DFE', flip: true, rot: 30, at: [262, 100] }], polys: ['ABC', 'DFE'], at: { BAC: '53°', ACB: '45°', DFE: 'x', DEF: 'y' }, st: { AC: '7.8 cm', BC: '6.3 cm', FE: 'z cm' } };
+figInto('t1FigQ', T1);
+solution('t1Fig', 't1Proof', T1, [
+  { t: 'In $\\triangle ABC$,' },
+  { s: '∠ABC = 180° − 53° − 45°', r: '∠ sum of △', hl: [['ABC', 1]] },
+  { s: '= 82°' },
+  { s: '∠DFE = ∠ABC', r: 'corr. ∠s, ≅ △s', hl: [['ABC', 'DFE', 1]] },
+  { s: 'x = \\underline{\\underline{82°}}' },
+  { s: '∠DEF = ∠ACB', r: 'corr. ∠s, ≅ △s', hl: [['ACB', 'DEF', 2]] },
+  { s: 'y = \\underline{\\underline{45°}}' },
+  { s: 'FE = BC', r: 'corr. sides, ≅ △s', hl: [['BC', 'FE', 3]] },
+  { s: 'z = \\underline{\\underline{6.3}}' },
+]);
+
+const EX3 = { w: 340, h: 190, pts: { A: [34.5, 66.6], B: [100, 150], E: [170, 95], D: [305.5, 123.4], C: [240, 40] }, polys: ['ABE', 'DCE'], rights: ['ABE'], at: { EDC: '40°' }, st: { AE: '5 cm' } };
+const setApart = splitFig('ex3Split', EX3, ['ABE', 'DCE']);
+onShown($('ex3Hint'), setApart);
+solution('ex3FigA', 'ex3ProofA', EX3, [
+  { t: '(a)', fixed: true },
+  { s: '∵ △ABE ≅ △DCE' },
+  { s: '∴ ∠BAE = ∠CDE', r: 'corr. ∠s, ≅ △s', hl: [['BAE', 'CDE', 1]] },
+  { s: '= 40°' },
+  { t: 'In $\\triangle ABE$,' },
+  { s: '∠AEB + ∠BAE + ∠ABE = 180°', r: '∠ sum of △', hl: [['AEB', 2], ['BAE', 1], ['ABE', 3]] },
+  { s: '∠AEB + 40° + 90° = 180°' },
+  { s: '∠AEB = \\underline{\\underline{50°}}' },
+]);
+solution('ex3FigB', 'ex3ProofB', EX3, [
+  { t: '(b)', fixed: true },
+  { s: 'DE = AE', r: 'corr. sides, ≅ △s', hl: [['AE', 'DE', 2]] },
+  { s: '= 5 cm' },
+  { s: 'AD = AE + DE', hl: [['AE', 1], ['DE', 2]] },
+  { s: '= (5 + 5) cm' },
+  { s: '= \\underline{\\underline{10 cm}}' },
+]);
+
+/* ---------- 4. Animation: which triangle fits? ---------- */
+(function () {
+  const V = G.V, NS = 'http://www.w3.org/2000/svg';
+  // ABC from its angles (48°, 72°, 60°), so the drawing is a true triangle; BC = 190 units.
+  const unit = G.triFromAngles(48, 72, 60).map(p => V.mul(p, 190));
+  const c0 = G.centroid(unit), base = unit.map(p => V.sub(p, c0));
+  const FIX = [190, 228];
+  const START = { xyz: { pos: [505, 222], ang: -18, k: 1, s: 1.2 }, pqr: { pos: [820, 214], ang: 145, k: -1, s: 1 } };
+  const world = st => base.map(v => V.add(st.pos, V.rot([v[0] * st.k * st.s, v[1] * st.s], st.ang)));
+  const pts = arr => arr.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+
+  function build(svg) {
+    const g = { svg };
+    g.fixed = Live.svg('polygon', { points: pts(world({ pos: FIX, ang: 0, k: 1, s: 1 })), fill: 'none', stroke: 'var(--ink)', 'stroke-width': 3, 'stroke-linejoin': 'round' });
+    svg.appendChild(g.fixed);
+    // side i joins vertex i and i+1: AB colour 1, BC colour 2, CA colour 3, as in the definition figure
+    const fw = world({ pos: FIX, ang: 0, k: 1, s: 1 });
+    g.sides = [0, 1, 2].map(i => {
+      const a = fw[i], b = fw[(i + 1) % 3];
+      const l = Live.svg('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: C(i + 1), 'stroke-width': 7, 'stroke-linecap': 'round', opacity: 0 });
+      svg.appendChild(l);
+      return l;
+    });
+    g.fixLabels = 'ABC'.split('').map(L => { const t = Live.svg('text', {}, L); svg.appendChild(t); return t; });
+    g.tris = {};
+    [['xyz', 'XYZ'], ['pqr', 'PQR']].forEach(([key, letters]) => {
+      const grp = Live.svg('g', {});
+      const poly = Live.svg('polygon', { fill: 'var(--blue)', 'fill-opacity': .14, stroke: 'var(--blue)', 'stroke-width': 3, 'stroke-linejoin': 'round' });
+      grp.appendChild(poly);
+      const labels = letters.split('').map(L => { const t = Live.svg('text', { style: 'fill:' + Live.color.blue }, L); grp.appendChild(t); return t; });
+      svg.appendChild(grp);
+      g.tris[key] = { grp, poly, labels };
+    });
+    return g;
+  }
+  function placeLabels(texts, wp, d) {
+    const c = G.centroid(wp);
+    texts.forEach((t, i) => {
+      const p = V.add(wp[i], V.mul(V.unit(V.sub(wp[i], c)), d));
+      t.setAttribute('x', p[0].toFixed(1)); t.setAttribute('y', p[1].toFixed(1));
+    });
+  }
+  function place(g, key, st) {
+    const T = g.tris[key], wp = world(st);
+    T.poly.setAttribute('points', pts(wp));
+    placeLabels(T.labels, wp, 22);
+  }
+  function fixLabels(g, d) { placeLabels(g.fixLabels, world({ pos: FIX, ang: 0, k: 1, s: 1 }), d); }
+  function reset(g) {
+    place(g, 'xyz', START.xyz); place(g, 'pqr', START.pqr);
+    g.tris.xyz.grp.setAttribute('opacity', 1);
+    g.sides.forEach(l => l.setAttribute('opacity', 0));
+    g.tris.pqr.poly.setAttribute('stroke', 'var(--blue)');
+    fixLabels(g, 22);
+  }
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const mix = (A, B, p) => ({ pos: [lerp(A.pos[0], B.pos[0], p), lerp(A.pos[1], B.pos[1], p)], ang: lerp(A.ang, B.ang, p), k: lerp(A.k, B.k, p), s: lerp(A.s, B.s, p) });
+
+  reset(build($('fit0Svg')));
+  const g = build($('fitSvg')), status = $('fitStatus');
+  reset(g);
+
+  Live.onEnter('fit', async alive => {
+    reset(g); status.textContent = '';
+    const say = t => { if (alive()) status.textContent = t; };
+    const move = (key, A, B, ms) => Live.tween(ms, p => place(g, key, mix(A, B, Live.ease(p))), alive);
+    await Live.wait(900, alive); if (!alive()) return;
+    // XYZ: slide and turn onto ABC. It is the same shape but bigger, so it cannot fit.
+    const xyzOn = { pos: FIX, ang: 0, k: 1, s: START.xyz.s };
+    say('Try △XYZ: slide it and turn it.');
+    await move('xyz', START.xyz, xyzOn, 2000); if (!alive()) return;
+    say('Too big: the same shape, but not the same size.');
+    await Live.wait(1900, alive); if (!alive()) return;
+    await move('xyz', xyzOn, START.xyz, 1200); if (!alive()) return;
+    g.tris.xyz.grp.setAttribute('opacity', .3);
+    // PQR: slide, turn, flip.
+    const s1 = { pos: FIX, ang: START.pqr.ang, k: -1, s: 1 }, s2 = { pos: FIX, ang: 0, k: -1, s: 1 }, s3 = { pos: FIX, ang: 0, k: 1, s: 1 };
+    say('Try △PQR: slide it…');
+    await move('pqr', START.pqr, s1, 1700); if (!alive()) return;
+    say('…turn it…');
+    await move('pqr', s1, s2, 1500); if (!alive()) return;
+    say('…and flip it.');
+    await move('pqr', s2, s3, 1300); if (!alive()) return;
+    // It fits: move ABC's letters out so both names show, and colour the matching sides.
+    g.tris.pqr.poly.setAttribute('stroke', 'none');
+    say('It fits exactly.');
+    await Live.tween(700, p => {
+      const e = Live.ease(p);
+      fixLabels(g, 22 + 36 * e);
+      g.sides.forEach(l => l.setAttribute('opacity', e));
+    }, alive);
+  });
+})();
+
+/* ---------- 5. Animation: the order of the letters ---------- */
+(function () {
+  const svg = $('orderSvg');
+  const Y0 = 100, Y1 = 250;
+  const slots = { '△1': 182, A: 254, B: 322, C: 390, '≅': 500, '△2': 610, X: 682, Y: 750, Z: 818 };
+  Object.keys(slots).forEach(k => {
+    const ch = k[0], letter = /[A-Z]/.test(ch);
+    svg.appendChild(Live.svg('text', { x: slots[k], y: Y0, 'font-size': letter ? 92 : 80, class: letter ? 'it' : '' }, ch));
+  });
+  const pairs = [['A', 'X'], ['B', 'Y'], ['C', 'Z']], dest = [240, 500, 760];
+  const parts = pairs.map(([l, r], i) => {
+    const bars = [l, r].map(L => Live.svg('line', { x1: slots[L] - 26, x2: slots[L] + 26, y1: Y0 + 30, y2: Y0 + 30, stroke: C(i + 1), 'stroke-width': 6 }));
+    bars.forEach(b => svg.appendChild(b));
+    const movers = [l, r].map(L => {
+      const grp = Live.svg('g', {});
+      grp.appendChild(Live.svg('text', { x: 0, y: 0, 'font-size': 92, class: 'it' }, L));
+      svg.appendChild(grp);
+      return grp;
+    });
+    const arrow = Live.svg('text', { x: dest[i], y: Y1, 'font-size': 56, style: 'fill:' + Live.color.muted }, '↔');
+    svg.appendChild(arrow);
+    const under = Live.svg('line', { x1: dest[i] - 100, x2: dest[i] + 100, y1: Y1 + 24, y2: Y1 + 24, stroke: C(i + 1), 'stroke-width': 6 });
+    svg.appendChild(under);
+    return { l, r, i, bars, movers, arrow, under };
+  });
+  const at = (grp, x, y, s) => grp.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(3)})`);
+  function reset() {
+    parts.forEach(P => {
+      at(P.movers[0], slots[P.l], Y0, 1); at(P.movers[1], slots[P.r], Y0, 1);
+      P.movers.forEach(m => m.setAttribute('opacity', 0));
+      P.bars.forEach(b => b.setAttribute('opacity', 0));
+      P.arrow.setAttribute('opacity', 0); P.under.setAttribute('opacity', 0);
+    });
+  }
+  reset();
+  Live.onEnter('order', async alive => {
+    reset();
+    await Live.wait(1100, alive);
+    for (const P of parts) {
+      if (!alive()) return;
+      P.movers.forEach(m => m.setAttribute('opacity', 1));
+      await Live.tween(400, p => P.bars.forEach(b => b.setAttribute('opacity', p)), alive); if (!alive()) return;
+      const xL = slots[P.l], xR = slots[P.r], tL = dest[P.i] - 62, tR = dest[P.i] + 62;
+      await Live.tween(1300, p => {
+        const e = Live.ease(p), y = Y0 + (Y1 - Y0) * e, s = 1 - 0.3 * e;
+        at(P.movers[0], xL + (tL - xL) * e, y, s); at(P.movers[1], xR + (tR - xR) * e, y, s);
+      }, alive); if (!alive()) return;
+      await Live.tween(400, p => { P.arrow.setAttribute('opacity', p); P.under.setAttribute('opacity', p); }, alive);
+      await Live.wait(500, alive);
+    }
+  });
+})();
+</script>
+</body>
+</html>

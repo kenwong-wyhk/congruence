@@ -4,6 +4,7 @@ C5.sections['5.1'] = {
   id: '5.1',
   title: 'Concept of Congruent Triangles',
   blurb: 'What "congruent" means, matching vertices, and finding unknown sides and angles.',
+  live: 's51-live.html',   // the step-through version shown in class (live/ holds its engine)
   traps: ['order', 'position', 'fullname', 'anglesum', 'reasonformat', 'flip'],
   learn: [
     { key: 'Two figures are <b>congruent</b> if they have the <b>same shape and the same size</b>. You can slide, turn or flip one so that it fits <b>exactly</b> on top of the other.<br>We use the symbol $\\cong$, read "is congruent to".', title: 'What does congruent mean?' },
@@ -165,7 +166,10 @@ C5.sections['5.1'] = {
 
 /* Randomised "find the unknowns" question for 5.1 */
 C5.gens.s51rand = () => {
-  const angs = G.randAngles(35, 100, 10);
+  // angs[2] is the angle students find with the angle sum; it is not marked. Keep it at least 45°:
+  // a smaller one makes the side between the two marked angles short, and their labels collide.
+  let angs;
+  do { angs = G.randAngles(35, 100, 10); } while (angs[2] < 45);
   const ls = U.letters(6), t1 = ls.slice(0, 3).join(''), t2 = ls.slice(3).join('');
   const p = U.perm3(), L = p.map(i => t1[i]).join(''), R = p.map(i => t2[i]).join('');
   const side = U.rint(30, 95) / 10;

@@ -231,6 +231,12 @@ table.proof tr.step-hidden { display: none; }
 table.proof tr.clickable { cursor: pointer; }
 table.proof tr.clickable:hover td { background: var(--blue-tint); }
 table.proof tr.active td { background: var(--blue-tint-2); }
+/* the highlighted line takes a light tint of its highlight colour (pair colour at 20% on white),
+   so the line matches the figure; grey when the line lights parts in several colours */
+table.proof tr.active[data-c="1"] td { background: #ccdaeb; }
+table.proof tr.active[data-c="2"] td { background: #f7cccf; }
+table.proof tr.active[data-c="3"] td { background: #f1e2d5; }
+table.proof tr.active[data-c="mix"] td { background: #ececed; }
 
 /* proof bank */
 .bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; border: 1px dashed var(--frame); min-height: 56px; }
