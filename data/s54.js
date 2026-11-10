@@ -3,6 +3,8 @@
 (() => {
   // Quadrilateral shapes (computed so the drawn angles match the labels).
   const Q1 = [[0, 0], [6, 0], [4.76, -4.33], [-0.56, -1.96]];              // 106, 74, 82, 98
+  // a more even quadrilateral for the definition figure: every side is long enough for its marks (up to 4)
+  const QD = [[0, 0], [6, 0], [4.8, -4.4], [0.9, -3.7]];
   const Q2 = [[0, 0], [5.5, 0], [4.13, -3.22], [1.24, -2.66]];             // 65, 67, 102, 126 (AB 5.5, BC 3.5)
   const Q3a = [[0, 0], [4.5, 0], [1.25, -8.93], [-1.24, -4.62]];           // 105, 70, 50, 135
   const Q3b = [[0, 0], [2.5, 0], [0.45, -5.64], [-1.78, -1.78]];           // 135, 70, 50, 105
@@ -56,12 +58,13 @@
     id: '5.4',
     title: 'Concept of Congruent 2-D Figures',
     blurb: 'Congruent polygons, finding corresponding parts by inspection, and when figures are NOT congruent.',
+    live: 's54-live.html',   // the step-through version shown in class
     traps: ['poly-arrange', 'flip', 'area', 'order', 'fullname'],
     learn: [
       { title: 'Congruent figures', key: 'Figures which can <b>coincide</b> with each other are called <b>congruent figures</b>. They have the same shape and the same size.<br>Sliding, turning and flipping do not change a figure, so the result is congruent to the original.' },
       { demo: 'overlay', opts: { title: 'Try it with quadrilaterals', shape: Q1, letters1: 'ABCD', letters2: 'PQRS', intro: 'Drag, turn and flip $PQRS$ so it fits exactly on $ABCD$.' } },
       { title: 'Congruent polygons', key: 'Two polygons are congruent if<ol><li>each pair of corresponding sides are equal, and</li><li>each pair of corresponding angles are equal.</li></ol>If $ABCD \\cong PQRS$, then<br>$AB = PQ$, $BC = QR$, $CD = RS$, $DA = SP$, and<br>$\\angle DAB = \\angle SPQ$, $\\angle ABC = \\angle PQR$, $\\angle BCD = \\angle QRS$, $\\angle CDA = \\angle RSP$.',
-        fig: { w: 340, h: 170, make: [{ tri: 'ABCD', shape: Q1, box: [15, 20, 140, 130] }], derive: [{ src: 'ABCD', dst: 'PQRS', shift: [175, 0] }], polys: ['ABCD', 'PQRS'], ticks: { AB: 1, PQ: 1, BC: 2, QR: 2, CD: 3, RS: 3 }, arcs: { DAB: 1, SPQ: 1, ABC: 2, PQR: 2, BCD: 3, QRS: 3 } } },
+        fig: { w: 340, h: 170, make: [{ tri: 'ABCD', shape: QD, box: [15, 20, 140, 130] }], derive: [{ src: 'ABCD', dst: 'PQRS', shift: [175, 0] }], polys: ['ABCD', 'PQRS'], ticks: { AB: 1, PQ: 1, BC: 2, QR: 2, CD: 3, RS: 3, DA: 4, SP: 4 }, arcs: { DAB: 1, SPQ: 1, ABC: 2, PQR: 2, BCD: 3, QRS: 3, CDA: 4, RSP: 4 } } },
       { tip: 'In a polygon, the full name of an angle uses the two neighbouring vertices: the angle at A in $ABCD$ is $\\angle DAB$ (or $\\angle BAD$).', title: 'Full angle names in polygons' },
       { title: 'Angle sum of a polygon', key: 'The interior angles of an $n$-sided polygon add up to $(n - 2) \\times 180^\\circ$ &nbsp;[reason: <b>∠ sum of polygon</b>].<br>Quadrilateral: $360^\\circ$. Pentagon: $540^\\circ$. Hexagon: $720^\\circ$.<br>Use it to find the one angle that is not marked, then use the correspondence.' },
       { title: 'Curved figures can be congruent too', key: 'Congruence is not only for polygons. Two figures with curved edges are congruent if one can be moved (slid, turned or flipped) to fit <b>exactly</b> on the other. In pair (b) below, the second shape is flipped and turned — still congruent.', fig: Object.assign(curvedFig(), { h: 175, shapes: curvedFig().shapes.slice(0, 4), texts: curvedFig().texts.slice(0, 2) }) },
@@ -262,6 +265,9 @@
     [s0, s1, c].forEach((L, i) => { const q = P[P.length - 1]; P.push([q[0] + L * u[i][0], q[1] + L * u[i][1]]); });
     return { pts: P.map(p => [p[0], -p[1]]), c, d };
   }
+  // The copy keeps a gap of 72 (not the default 52) from the first shape. The gap is measured before
+  // the figure is scaled to fit, and a copy turned 45° is wide enough to shrink it by about a quarter,
+  // which let two facing vertex letters touch.
   C5.gens.s54rand = () => {
     let ang, shp, s0;
     for (let tries = 0; tries < 400; tries++) {
@@ -289,7 +295,7 @@
     const x = ang[3];
     return {
       q: `In the figure, $${S1} \\cong ${S2}$. Find $x$ and $y$.`,
-      fig: { w: 420, h: 210, make: [{ tri: L1, shape: shp.pts, box: [5, 15, 175, 180] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [330, 105] }], polys: [L1, L2], at, st, arcR: 13, pad: 36 },
+      fig: { w: 420, h: 210, make: [{ tri: L1, shape: shp.pts, box: [5, 15, 175, 180] }], derive: [{ src: L1, dst: L2, rot: U.pick([0, 90, 180, 270, 45, 135]), flip: Math.random() < 0.5, at: [330, 105], gap: 72 }], polys: [L1, L2], at, st, arcR: 13, pad: 36 },
       lines: [`$x = $ [[num:${x}]]°`, `$y = $ [[num:${s0}]]`],
       wrongs: [0, 1, 2].map(i => ({ tok: 0, val: ang[i], hint: `x is at ${L2[3]}, which matches ${L1[3]} — the angle that is not marked. Use the angle sum of a quadrilateral (360°).`, trap: 'anglesum' })),
       hints: [`Read the statement: ${[0, 1, 2, 3].map(i => S1[i] + ' ↔ ' + S2[i]).join(', ')}.`, 'The angles of a quadrilateral add up to 360°.'],

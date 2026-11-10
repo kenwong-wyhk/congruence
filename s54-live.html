@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.4 Congruent Figures Live</title>
+<meta name="description" content="Live version of F2 Ch5 section 5.4, for teaching from the front of the room.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- everything is served from this site: no third-party requests -->
+<link rel="stylesheet" href="css/fonts.css?v=18d89dea">
+<link rel="stylesheet" href="vendor/katex/katex.min.css?v=3f94e1b7">
+<link rel="stylesheet" href="live/live.css?v=a58df557">
+<link rel="stylesheet" href="live/lesson.css?v=604f3930">
+<style>
+/* Styles for this lesson only. Shared lesson styles: live/lesson.css; the engine's: live/live.css. */
+#fit0Svg { max-height: 34vh; }
+#fitSvg { max-height: 44vh; }
+#fitSvg text, #fit0Svg text { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; text-anchor: middle; dominant-baseline: central; }
+.cond p { margin: 0; }
+.cond .lit { font-size: 1.6rem; }
+.counts { display: grid; grid-template-columns: repeat(3, auto); gap: 1rem 5rem; justify-content: start; align-items: end; }
+.counts .k { font-size: 1.4rem; }
+.counts .v { font-family: var(--font-display); font-size: 6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.pairs4 { display: grid; grid-template-columns: auto auto; gap: .5rem 1.4rem; align-items: center; }
+.pairs4 .tagn { font-family: var(--font-display); font-size: 1.6rem; color: var(--blue); }
+.pairs4 .btn { font-size: 1.15rem; padding: .3rem .9rem; }
+.figbox.tall .fig { max-height: 62vh; }
+</style>
+</head>
+<!-- data-reading links back to the reading version (the 5.4 page of the self-study site). -->
+<body data-reading="index.html#/s/5.4">
+
+<!-- 1 Title -->
+<section class="scene blue title">
+  <span class="cross-v"></span><span class="cross-h"></span>
+  <div class="body">
+    <p class="kicker in" style="--i:5">F2 MATHEMATICS · CH5 CONGRUENCE · SECTION 5.4</p>
+    <h1 class="display huge in" style="--i:7">Congruent 2-D Figures</h1>
+    <p class="in" style="--i:9">Not only triangles: any shape can be congruent to another.</p>
+    <p class="kicker in" style="--i:14">Press → to begin</p>
+  </div>
+  <div class="foot bare"><h2></h2></div>
+</section>
+
+<!-- 2 Problem: does it fit? -->
+<section class="scene">
+  <div class="body">
+    <p class="in" style="--i:1">Two quadrilaterals. You may slide, turn or flip $PQRS$.</p>
+    <div class="in" style="--i:2"><svg id="fit0Svg" viewBox="0 0 1000 440" role="img" aria-label="Quadrilateral ABCD, and quadrilateral PQRS turned and flipped"></svg></div>
+    <p class="display big blue-text" data-step="1">Can $PQRS$ fit exactly on $ABCD$?</p>
+    <div class="btns choice" data-step="1"><button class="btn">Yes</button><button class="btn">No</button></div>
+    <p class="note" data-step="2">The next screen tries it. Has everyone chosen?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Does it fit?</h2></div>
+</section>
+
+<!-- 3 Reveal: slide, turn, flip (animation) -->
+<section class="scene" data-enter="fit">
+  <div class="body">
+    <div class="in" style="--i:1"><svg id="fitSvg" viewBox="0 0 1000 440" role="img" aria-label="PQRS is slid, turned and flipped and fits exactly on ABCD"></svg></div>
+    <div class="btns in" style="--i:2"><button class="btn" onclick="Live.replay('fit')">Play again</button><p class="status" id="fitStatus"></p></div>
+    <p class="display big blue-text" data-step="1">$ABCD \cong PQRS$</p>
+    <p data-step="1">Figures that can <strong>coincide</strong> are congruent figures. $A \leftrightarrow P$, $B \leftrightarrow Q$, $C \leftrightarrow R$, $D \leftrightarrow S$.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Does it fit?</h2></div>
+</section>
+
+<!-- 4 Congruent polygons -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="defFig"></div>
+      <div class="cond stack">
+        <p class="q in" style="--i:2">Two polygons are congruent if</p>
+        <p class="lit" data-step="1" id="def1">each pair of corresponding <strong>sides</strong> are equal: $AB = PQ$, $BC = QR$, $CD = RS$, $DA = SP$, and</p>
+        <p class="lit" data-step="2" id="def2">each pair of corresponding <strong>angles</strong> are equal: $\angle DAB = \angle SPQ$, $\angle ABC = \angle PQR$, $\angle BCD = \angle QRS$, $\angle CDA = \angle RSP$.</p>
+        <p class="note" data-step="3">As with triangles, the order of the letters tells you which parts correspond. If any one pair is not equal, the figures are not congruent.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Congruent polygons</h2></div>
+</section>
+
+<!-- 5 Full angle names in polygons -->
+<section class="scene">
+  <div class="body">
+    <div class="pair">
+      <div class="figbox in" style="--i:1" id="nameFig"></div>
+      <div class="stack">
+        <p class="display big blue-text in" style="--i:2">The angle at $A$ is $\angle DAB$.</p>
+        <p class="q in" style="--i:3">Use the two neighbouring vertices, with $A$ in the middle: $\angle DAB$ or $\angle BAD$, never $\angle A$.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Full angle names</h2></div>
+</section>
+
+<!-- 6 Problem: angle sum of a pentagon -->
+<section class="scene">
+  <div class="body">
+    <p class="in" style="--i:1">The angles of a triangle add up to $180^\circ$, and of a quadrilateral to $360^\circ$.</p>
+    <p class="display big blue-text in" style="--i:2">What do the angles of a pentagon add up to?</p>
+    <div class="btns choice in" style="--i:3"><button class="btn">$450^\circ$</button><button class="btn">$540^\circ$</button><button class="btn">$720^\circ$</button></div>
+    <p class="note" data-step="1">The next screen shows it. Has everyone chosen?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Angle sum</h2></div>
+</section>
+
+<!-- 7 Reveal: angle sum of a polygon -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display big in" style="--i:1">An $n$-sided polygon: $(n - 2) \times 180^\circ$</p>
+    <div class="counts in" style="--i:2">
+      <div><div class="k">Quadrilateral</div><div class="v"><span data-count="360" data-delay="1100">0</span>°</div></div>
+      <div><div class="k">Pentagon</div><div class="v"><span data-count="540" data-delay="1500">0</span>°</div></div>
+      <div><div class="k">Hexagon</div><div class="v"><span data-count="720" data-delay="1900">0</span>°</div></div>
+    </div>
+    <p class="rule" data-step="1">Reason: <strong>∠ sum of polygon</strong>. Use it to find the one angle that is not marked, then match the letters.</p>
+  </div>
+  <div class="foot"><h2>5.4 | Angle sum</h2></div>
+</section>
+
+<!-- 8 Worked example, done together -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="stack">
+        <p class="q in" style="--i:1">$ABCD \cong PQRS$. Find $x$, $y$ and $z$.</p>
+        <div class="figbox in" style="--i:2" id="ex1Fig"></div>
+      </div>
+      <div class="in" style="--i:3" id="ex1Proof"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Together</h2></div>
+</section>
+
+<!-- 9 By inspection (alone) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">The two quadrilaterals are congruent, but no statement is given. Find $BC$ and $\angle BCD$.</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="180"></button></div><p>First work out which vertex matches which.</p></div>
+        <p data-step="1"><strong>Hint.</strong> Match a part that appears only once first: the $65^\circ$ angles, then the $126^\circ$ angles.</p>
+        <p class="note" data-step="2">The next screen shows the solution. Are both answers written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | By inspection</h2></div>
+</section>
+
+<!-- 10 Solution: by inspection -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2Fig"></div>
+      <div id="ex2Proof"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | By inspection: solution</h2></div>
+</section>
+
+<!-- 11 Quick check: letters only -->
+<section class="scene">
+  <div class="body rows">
+    <div class="row in" style="--i:1"><div><div class="who">Alone</div><button class="timer" data-sec="180"></button></div>
+      <div><p class="q">$ABCDE \cong QPTSR$, $AB = 11 cm$, $\angle CDE = 128^\circ$ and $\angle DEA = 96^\circ$. Find</p>
+      <div class="fills"><span>(a) $QP = $<span class="blank"></span></span><span>(b) $\angle TSR = $<span class="blank"></span></span><span>(c) $\angle SRQ = $<span class="blank"></span></span></div></div>
+    </div>
+    <p class="note" data-step="1">The next screen shows the answers. Is every blank filled?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Quick check</h2></div>
+</section>
+
+<!-- 12 Reveal: quick check answers -->
+<section class="scene blue">
+  <div class="body">
+    <p class="kicker in" style="--i:1">$A \leftrightarrow Q$, &nbsp;$B \leftrightarrow P$, &nbsp;$C \leftrightarrow T$, &nbsp;$D \leftrightarrow S$, &nbsp;$E \leftrightarrow R$</p>
+    <div class="answers">
+      <span class="in" style="--i:2">(a) $QP = 11 cm$</span><span class="in" style="--i:3">(b) $\angle TSR = 128^\circ$</span><span class="in" style="--i:4">(c) $\angle SRQ = 96^\circ$</span>
+    </div>
+    <p class="rule" data-step="1">The vertex of $\angle TSR$ is $S$, the 4th letter, so it matches the 4th letter $D$: $\angle CDE$.</p>
+  </div>
+  <div class="foot"><h2>5.4 | Quick check answers</h2></div>
+</section>
+
+<!-- 13 Team task: inspection plus angle sum -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="t1FigQ"></div>
+      <div class="rows">
+        <p class="q in" style="--i:2">The two quadrilaterals are congruent. Find $\angle SPQ$.</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="150"></button></div><p>Which vertex matches $P$?</p></div>
+        <div class="row" data-step="1"><div><div class="who">Team</div><button class="timer" data-sec="180"></button></div><p>Agree on the matching, then find the angle.</p></div>
+        <p data-step="2"><strong>Hint.</strong> Start from the $128^\circ$ angles, then use the 6 cm and 10 cm sides next to them.</p>
+        <p class="note" data-step="3">The next screen shows the solution. Has every team an answer?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Team task</h2></div>
+</section>
+
+<!-- 14 Solution: team task -->
+<section class="scene">
+  <div class="body tight">
+    <div class="pair">
+      <div class="figbox in" style="--i:1" id="t1Fig"></div>
+      <div id="t1Proof"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Team task: solution</h2></div>
+</section>
+
+<!-- 15 Same angles, congruent? (commit) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex3FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">Both quadrilaterals have angles $105^\circ$, $70^\circ$, $50^\circ$ and $135^\circ$.</p>
+        <p class="display mid blue-text in" style="--i:3">Are they congruent?</p>
+        <div class="row in" style="--i:4"><div><div class="who">Pairs</div><button class="timer" data-sec="120"></button></div><div class="btns choice"><button class="btn">Yes</button><button class="btn">No</button></div></div>
+        <p class="note" data-step="1">The next screen explains it. Has every pair chosen, with a reason?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Same angles?</h2></div>
+</section>
+
+<!-- 16 Solution: same angles -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex3Fig"></div>
+      <div class="cond stack">
+        <p class="lit" data-step="1" id="sa1">Only $\angle DAB$ and $\angle YZW$ are $105^\circ$, so they would have to match.</p>
+        <p class="lit" data-step="2" id="sa2">Next to $\angle DAB$: $70^\circ$ and $135^\circ$.</p>
+        <p class="lit" data-step="3" id="sa3">Next to $\angle YZW$: $50^\circ$ and $135^\circ$. No $70^\circ$.</p>
+        <p class="display mid blue-text" data-step="4">So they are <strong>not</strong> congruent.</p>
+        <p class="note" data-step="5">Same angles is not enough: they must come in the same order around the shape.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Same angles: answer</h2></div>
+</section>
+
+<!-- 17 Curved figures (alone) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair">
+      <div class="figbox tall in" style="--i:1" id="curvedFig"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">Curved figures can be congruent too. In each pair, is the figure on the right congruent to the one on the left?</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="120"></button></div>
+          <div class="pairs4">
+            <span class="tagn">(a)</span><div class="btns choice"><button class="btn">Congruent</button><button class="btn">Not</button></div>
+            <span class="tagn">(b)</span><div class="btns choice"><button class="btn">Congruent</button><button class="btn">Not</button></div>
+            <span class="tagn">(c)</span><div class="btns choice"><button class="btn">Congruent</button><button class="btn">Not</button></div>
+            <span class="tagn">(d)</span><div class="btns choice"><button class="btn">Congruent</button><button class="btn">Not</button></div>
+          </div></div>
+        <p class="note" data-step="1">The next screen shows the answers. Has everyone decided all four?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Curved figures</h2></div>
+</section>
+
+<!-- 18 Reveal: curved figures -->
+<section class="scene blue">
+  <div class="body">
+    <div class="answers two-col">
+      <span class="in" style="--i:1">(a) Congruent</span><span class="in" style="--i:2">turned through $90^\circ$</span>
+      <span class="in" style="--i:3">(b) Congruent</span><span class="in" style="--i:4">flipped over and turned</span>
+      <span class="in" style="--i:5">(c) Not congruent</span><span class="in" style="--i:6">same shape, bigger</span>
+      <span class="in" style="--i:7">(d) Not congruent</span><span class="in" style="--i:8">stretched: a different shape</span>
+    </div>
+  </div>
+  <div class="foot"><h2>5.4 | Curved figures: answers</h2></div>
+</section>
+
+<!-- 19 Quick check: always congruent? -->
+<section class="scene">
+  <div class="body rows">
+    <div class="row in" style="--i:1"><div><div class="who">Alone</div><button class="timer" data-sec="150"></button></div>
+      <div><p class="q">Which of the following are true?</p>
+        <p class="q">I. Any two parallelograms with the same area must be congruent.<br>II. Any two circles with the same circumference must be congruent.<br>III. Any two squares with the same perimeter must be congruent.</p>
+        <div class="btns choice opts" style="margin-top:.7rem"><button class="btn"><span class="opt">A</span>I, II</button><button class="btn"><span class="opt">B</span>I, III</button><button class="btn"><span class="opt">C</span>II, III</button><button class="btn"><span class="opt">D</span>I, II, III</button></div></div>
+    </div>
+    <p class="note" data-step="1">The next screen shows the answer. Has everyone chosen?</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Always congruent?</h2></div>
+</section>
+
+<!-- 20 Reveal: always congruent -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display big in" style="--i:1">C: II and III only.</p>
+    <p class="in" style="--i:2">A circle's circumference fixes its radius; a square's perimeter fixes its side. But a 2 × 6 and a 3 × 4 rectangle are both parallelograms with area 12.</p>
+    <div class="rule" data-step="1">
+      <p><strong>Always congruent if</strong> two circles have equal radii (or areas, or circumferences); two squares have equal sides (or areas, or perimeters); two regular polygons with the same number of sides have equal sides.</p>
+    </div>
+  </div>
+  <div class="foot"><h2>5.4 | Always congruent: answer</h2></div>
+</section>
+
+<!-- 21 Summary -->
+<section class="scene">
+  <div class="body">
+    <div class="rules">
+      <div class="r1 in" style="--i:1"><span class="n">1</span><div><p>Congruent figures can coincide.</p><p class="sub">All corresponding sides and all corresponding angles are equal, whatever the shape.</p></div></div>
+      <div class="r1" data-step="1"><span class="n">2</span><div><p>No statement? Match by inspection.</p><p class="sub">Start from a part that appears only once, then walk round both shapes.</p></div></div>
+      <div class="r1" data-step="2"><span class="n">3</span><div><p>Same angles is not enough.</p><p class="sub">They must come in the same order. Use $(n - 2) \times 180^\circ$ for the angle that is not marked.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.4 | Today</h2></div>
+</section>
+
+<!-- 22 After class -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display huge in" style="--i:1">After class</p>
+    <p class="in" style="--i:2">On the self-study site, section 5.4: <strong>Practice</strong> (10 questions, one with new numbers each time) and <strong>Traps</strong>.</p>
+    <p class="in" style="--i:3">Before the test: the <strong>Mixed Challenge</strong> in Test mode, and the <strong>Revision sheet</strong>.</p>
+  </div>
+  <div class="foot"><h2>5.4 | Practise</h2></div>
+</section>
+
+<script src="vendor/katex/katex.min.js?v=4881bfc9"></script>
+<script src="js/core.js?v=eb489902"></script>
+<script src="js/geom.js?v=1c7cddc4"></script>
+<script src="js/check.js?v=b1e47a74"></script>
+<script src="js/question.js?v=e4308582"></script>
+<script src="live/live.js?v=4d78ca3d"></script>
+<script src="live/lesson.js?v=ef6bdcf3"></script>
+<script>
+'use strict';
+const { $, C, figInto, solution, litFigure } = L5;
+
+/* ---------- Shapes (the same as the reading version, data/s54.js) ---------- */
+const Q1 = [[0, 0], [6, 0], [4.76, -4.33], [-0.56, -1.96]];              // angles 106, 74, 82, 98
+// a more even quadrilateral for the definition figure: every side is long enough for its marks (up to 4)
+const QD = [[0, 0], [6, 0], [4.8, -4.4], [0.9, -3.7]];
+const Q2 = [[0, 0], [5.5, 0], [4.13, -3.22], [1.24, -2.66]];             // 65, 67, 102, 126
+const Q3a = [[0, 0], [4.5, 0], [1.25, -8.93], [-1.24, -4.62]];           // 105, 70, 50, 135
+const Q3b = [[0, 0], [2.5, 0], [0.45, -5.64], [-1.78, -1.78]];           // 135, 70, 50, 105
+const QP4 = [[0, 0], [10, 0], [13.69, -4.73], [-1.06, -10.10]];          // C96, D128, A72, B64
+const DSHAPE = 'M -28 -26 L 28 -26 L 28 0 A 28 28 0 0 1 -28 0 Z';
+const DROP = 'M 0 -34 C 22 -10 28 12 2 28 C -26 14 -14 -8 0 -34 Z';
+const QUARTER = 'M -20 20 L 20 20 A 40 40 0 0 0 -20 -20 Z';
+const LEAF = 'M -30 10 C -20 -25 20 -25 30 10 C 10 0 -10 0 -30 10 Z';
+
+litFigure('defFig', { w: 340, h: 170, make: [{ tri: 'ABCD', shape: QD, box: [15, 20, 140, 130] }], derive: [{ src: 'ABCD', dst: 'PQRS', shift: [175, 0] }], polys: ['ABCD', 'PQRS'], ticks: { AB: 1, PQ: 1, BC: 2, QR: 2, CD: 3, RS: 3, DA: 4, SP: 4 }, arcs: { DAB: 1, SPQ: 1, ABC: 2, PQR: 2, BCD: 3, QRS: 3, CDA: 4, RSP: 4 } }, [
+  ['def1', [['AB', 'PQ', 1], ['BC', 'QR', 2], ['CD', 'RS', 3], ['DA', 'SP', 4]]],
+  ['def2', [['DAB', 'SPQ', 1], ['ABC', 'PQR', 2], ['BCD', 'QRS', 3], ['CDA', 'RSP', 4]]]]);
+figInto('nameFig', { w: 300, h: 190, make: [{ tri: 'ABCD', shape: Q1, box: [30, 20, 240, 150] }], polys: ['ABCD'], arcs: { DAB: 1 } }, [['DAB', 1]]);
+
+solution('ex1Fig', 'ex1Proof',
+  { w: 340, h: 180, make: [{ tri: 'ABCD', shape: Q1, box: [5, 20, 130, 130] }], derive: [{ src: 'ABCD', dst: 'PQRS', rot: 35, at: [282, 92] }], polys: ['ABCD', 'PQRS'], at: { BCD: 'x', DAB: 'y', QRS: '82°', SPQ: '106°' }, st: { AB: '6 cm', BC: '4.5 cm', PQ: 'z cm' } },
+  [
+    { s: '∵ ABCD ≅ PQRS' },
+    { s: '∴ ∠BCD = ∠QRS', hl: [['BCD', 'QRS', 1]] },
+    { s: 'x = \\underline{\\underline{82°}}' },
+    { s: '∠DAB = ∠SPQ', hl: [['DAB', 'SPQ', 2]] },
+    { s: 'y = \\underline{\\underline{106°}}' },
+    { s: 'PQ = AB', hl: [['AB', 'PQ', 3]] },
+    { s: 'z = \\underline{\\underline{6}}' },
+  ]);
+
+const EX2 = { w: 400, h: 200, make: [{ tri: 'ABCD', shape: Q2, box: [5, 20, 170, 150] }], derive: [{ src: 'ABCD', dst: 'PSRQ', flip: true, rot: 15, at: [325, 100] }], polys: ['ABCD', 'PQRS'], at: { DAB: '65°', CDA: '126°', SPQ: '65°', PQR: '126°', QRS: '102°', RSP: '67°' }, arcR: 13, st: { SR: '7 cm', PS: '11 cm' } };
+figInto('ex2FigQ', EX2);
+solution('ex2Fig', 'ex2Proof', EX2, [
+  { t: 'By inspection, $A$, $B$, $C$, $D$ correspond to $P$, $S$, $R$, $Q$.', hl: [['DAB', 'SPQ', 1], ['CDA', 'PQR', 2]] },
+  { s: '∴ ABCD ≅ PSRQ' },
+  { s: 'BC = SR', hl: [['BC', 'SR', 3]] },
+  { s: '= \\underline{\\underline{7 cm}}' },
+  { s: '∠BCD = ∠SRQ', hl: [['BCD', 'QRS', 1]] },
+  { s: '= \\underline{\\underline{102°}}' },
+]);
+
+const T1 = { w: 400, h: 210, make: [{ tri: 'CDAB', shape: QP4, box: [10, 15, 185, 180] }], derive: [{ src: 'CDAB', dst: 'PQRS', flip: true, rot: 160, at: [305, 105] }], polys: ['ABCD', 'PQRS'], at: { ADC: '128°', DAB: '72°', ABC: '64°', PQR: '128°' }, atPos: { DAB: 24, ADC: 18 }, st: { AD: '6 cm', DC: '10 cm', PQ: '10 cm', QR: '6 cm' }, arcR: 13 };
+figInto('t1FigQ', T1);
+solution('t1Fig', 't1Proof', T1, [
+  { t: 'By inspection, $C$, $D$, $A$, $B$ correspond to $P$, $Q$, $R$, $S$.', hl: [['ADC', 'PQR', 1], ['DC', 'PQ', 2], ['AD', 'QR', 3]] },
+  { s: '∠BCD = 360° − 128° − 72° − 64°', r: '∠ sum of polygon', hl: [['BCD', 1]] },
+  { s: '= 96°' },
+  { s: '∠SPQ = ∠BCD', hl: [['BCD', 'SPQ', 1]] },
+  { s: '= \\underline{\\underline{96°}}' },
+]);
+
+const EX3 = { w: 340, h: 190, make: [{ tri: 'ABCD', shape: Q3a, box: [10, 15, 150, 160], rot: 75 }, { tri: 'WXYZ', shape: Q3b, box: [185, 15, 145, 160], rot: 75 }], polys: ['ABCD', 'WXYZ'], at: { DAB: '105°', ABC: '70°', BCD: '50°', CDA: '135°', ZWX: '135°', WXY: '70°', XYZ: '50°', YZW: '105°' }, arcR: 13 };
+figInto('ex3FigQ', EX3);
+litFigure('ex3Fig', EX3, [
+  ['sa1', [['DAB', 'YZW', 1]]],
+  ['sa2', [['DAB', 1], ['ABC', 2], ['CDA', 2]]],
+  ['sa3', [['YZW', 1], ['XYZ', 3], ['ZWX', 3]]]]);
+
+const row = (y, a, b) => [{ d: a.d, at: [95, y], rot: a.rot, flip: a.flip, scale: a.scale, sx: a.sx }, { d: b.d, at: [235, y], rot: b.rot, flip: b.flip, scale: b.scale, sx: b.sx }];
+figInto('curvedFig', {
+  w: 320, h: 360, fit: false, noLabels: true, pts: {},
+  shapes: [...row(45, { d: DSHAPE }, { d: DSHAPE, rot: 90 }), ...row(130, { d: DROP }, { d: DROP, flip: true, rot: 30 }), ...row(220, { d: QUARTER }, { d: QUARTER, rot: 180, scale: 1.2 }), ...row(305, { d: LEAF }, { d: LEAF, rot: -20, sx: 1.25 })],
+  texts: [{ at: [22, 50], t: '(a)' }, { at: [22, 135], t: '(b)' }, { at: [22, 225], t: '(c)' }, { at: [22, 310], t: '(d)' }],
+});
+
+/* ---------- Animation: PQRS slides, turns and flips onto ABCD ---------- */
+(function () {
+  const V = G.V;
+  const shape = Q1.map(p => V.mul(p, 62)), c0 = G.centroid(shape), base = shape.map(p => V.sub(p, c0));
+  const FIX = [250, 225];
+  const START = { pos: [760, 215], ang: 150, k: -1 };
+  const world = st => base.map(v => V.add(st.pos, V.rot([v[0] * st.k, v[1]], st.ang)));
+  const pts = arr => arr.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const fixW = world({ pos: FIX, ang: 0, k: 1 });
+  function labels(texts, wp, d) {
+    const c = G.centroid(wp);
+    texts.forEach((t, i) => { const p = V.add(wp[i], V.mul(V.unit(V.sub(wp[i], c)), d)); t.setAttribute('x', p[0].toFixed(1)); t.setAttribute('y', p[1].toFixed(1)); });
+  }
+  function build(svg) {
+    const g = {};
+    svg.appendChild(Live.svg('polygon', { points: pts(fixW), fill: 'none', stroke: 'var(--ink)', 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+    // the four side pairs, as in the definition figure: AB blue, BC red, CD gold, DA grey
+    g.sides = [0, 1, 2, 3].map(i => { const a = fixW[i], b = fixW[(i + 1) % 4]; const l = Live.svg('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: C(i + 1), 'stroke-width': 7, 'stroke-linecap': 'round', opacity: 0 }); svg.appendChild(l); return l; });
+    g.fixLab = 'ABCD'.split('').map(L => { const t = Live.svg('text', {}, L); svg.appendChild(t); return t; });
+    g.poly = Live.svg('polygon', { fill: 'var(--blue)', 'fill-opacity': .14, stroke: 'var(--blue)', 'stroke-width': 3, 'stroke-linejoin': 'round' });
+    svg.appendChild(g.poly);
+    g.lab = 'PQRS'.split('').map(L => { const t = Live.svg('text', { style: 'fill:' + Live.color.blue }, L); svg.appendChild(t); return t; });
+    return g;
+  }
+  function place(g, st) { const wp = world(st); g.poly.setAttribute('points', pts(wp)); labels(g.lab, wp, 22); }
+  function reset(g) { place(g, START); g.poly.setAttribute('stroke', 'var(--blue)'); g.sides.forEach(l => l.setAttribute('opacity', 0)); labels(g.fixLab, fixW, 22); }
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const mix = (A, B, p) => ({ pos: [lerp(A.pos[0], B.pos[0], p), lerp(A.pos[1], B.pos[1], p)], ang: lerp(A.ang, B.ang, p), k: lerp(A.k, B.k, p) });
+
+  reset(build($('fit0Svg')));
+  const g = build($('fitSvg')), status = $('fitStatus');
+  reset(g);
+  Live.onEnter('fit', async alive => {
+    reset(g); status.textContent = '';
+    const say = t => { if (alive()) status.textContent = t; };
+    const move = (A, B, ms) => Live.tween(ms, p => place(g, mix(A, B, Live.ease(p))), alive);
+    const s1 = { pos: FIX, ang: START.ang, k: -1 }, s2 = { pos: FIX, ang: 0, k: -1 }, s3 = { pos: FIX, ang: 0, k: 1 };
+    await Live.wait(900, alive); if (!alive()) return;
+    say('Slide it…');
+    await move(START, s1, 1800); if (!alive()) return;
+    say('…turn it…');
+    await move(s1, s2, 1600); if (!alive()) return;
+    say('…and flip it.');
+    await move(s2, s3, 1300); if (!alive()) return;
+    g.poly.setAttribute('stroke', 'none');
+    say('It fits exactly.');
+    await Live.tween(700, p => { const e = Live.ease(p); labels(g.fixLab, fixW, 22 + 36 * e); g.sides.forEach(l => l.setAttribute('opacity', e)); }, alive);
+  });
+})();
+</script>
+</body>
+</html>

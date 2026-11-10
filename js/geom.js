@@ -13,8 +13,9 @@
      fit             true/false  rescale everything to fill the box (default: on when make/derive used)
      polys           ['ABC', ...]  closed outlines;  lines ['AEFD', ...] open paths
      dashed          ['AC']
-     ticks           { AB:1, DE:1 }   equal-side marks (1, 2, 3 ticks -> blue, red, gold)
+     ticks           { AB:1, DE:1 }   equal-side marks (1, 2, 3, 4 ticks -> blue, red, gold, grey)
      arcs            { ABC:1 }        equal-angle marks (angle at the middle letter)
+     cols            { ABC:3 }        colour a tick or arc pair differently from its count (here gold, one arc)
      rights          ['ABC']          right-angle squares
      arrows          { AB:1 }         parallel arrows
      st              { AB:'7 cm' }    text beside a side;  at { ABC:'65°' } text inside an angle
@@ -47,7 +48,8 @@ const G = (() => {
   const segKey = (a, b) => (a < b ? a + b : b + a);
   const angKey = s => (s[0] < s[2] ? s : s[2] + s[1] + s[0]);
   const partKey = p => (p.length === 2 ? segKey(p[0], p[1]) : p.length === 3 ? angKey(p) : p);
-  const COL = n => ['var(--ink)', 'var(--c1)', 'var(--c2)', 'var(--c3)'][n] || 'var(--ink)';
+  // pair colours: 1 blue, 2 red, 3 gold, 4 grey (a fourth pair, as in a quadrilateral)
+  const COL = n => ['var(--ink)', 'var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)'][n] || 'var(--ink)';
   const f2 = x => Math.round(x * 100) / 100;
 
   function centroid(arr) {
@@ -173,6 +175,8 @@ const G = (() => {
     const gGrid = g('g-grid'), gHL = g('g-hl'), gSeg = g('g-seg'), gMark = g('g-mark'), gTxt = g('g-txt'), gHit = g('g-hit');
     const w = spec.w || 320, h = spec.h || 200;
     const col = n => (spec.mono ? 'var(--ink)' : COL(n));
+    // a mark's colour follows its count (1 blue, 2 red, 3 gold) unless spec.cols names another
+    const markCol = (k, n) => col((spec.cols && spec.cols[k]) || n);
     if (spec.grid) {
       for (let x = 0; x <= w; x += spec.grid) mk('line', { x1: x, y1: 0, x2: x, y2: h, class: 'grid' }, gGrid);
       for (let y = 0; y <= h; y += spec.grid) mk('line', { x1: 0, y1: y, x2: w, y2: y, class: 'grid' }, gGrid);
@@ -208,7 +212,7 @@ const G = (() => {
       for (let i = 0; i < n; i++) {
         const c = V.add(M, V.mul(d, (i - (n - 1) / 2) * 4.5));
         const p1 = V.add(c, V.mul(nn, 6)), p2 = V.add(c, V.mul(nn, -6));
-        mk('line', { x1: f2(p1[0]), y1: f2(p1[1]), x2: f2(p2[0]), y2: f2(p2[1]), class: 'mark', stroke: col(n), 'stroke-width': 1.8 }, gMark);
+        mk('line', { x1: f2(p1[0]), y1: f2(p1[1]), x2: f2(p2[0]), y2: f2(p2[1]), class: 'mark', stroke: markCol(k, n), 'stroke-width': 1.8 }, gMark);
       }
     }
     // parallel arrows
@@ -229,7 +233,7 @@ const G = (() => {
       if (!A || !B || !C) continue;
       for (let i = 0; i < n; i++) {
         const s = sectorPath(B, A, C, arcR + i * 4);
-        mk('path', { d: s.d, class: 'mark', stroke: col(n), 'stroke-width': 1.6 }, gMark);
+        mk('path', { d: s.d, class: 'mark', stroke: markCol(k, n), 'stroke-width': 1.6 }, gMark);
       }
     }
     // Where an angle's label goes (distance r along the bisector) and how big its plain arc is.

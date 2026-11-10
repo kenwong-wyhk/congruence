@@ -13,7 +13,7 @@ student's device (progress ticks are kept in that browser only).
 | Traps | Trap Gallery — every common mistake with "the trap" vs "do this" |
 | Challenge | 10 random questions from a pool of 30 (5.1–5.4); Practice mode or 35-minute Test mode (answers and time are saved, so a refresh loses nothing) |
 | Revision sheet | Key points, conditions and reasons on one printable page (`#/sheet`) |
-| 5.1 Live | `s51-live.html`: the lesson as full-screen scenes for teaching from the front (arrow keys or a clicker; F for full screen). Engine and styles in `live/`. Linked from the 5.1 page. |
+| Live lessons | `s51-live.html` to `s54-live.html`: each section as full-screen scenes for teaching from the front (arrow keys or a clicker; F for full screen). Engine in `live/live.js` and `live/live.css`; shared lesson helpers in `live/lesson.js` and `live/lesson.css`. Linked from each section page (`live:` in the section's data file). |
 
 Progress: a practice question counts as **solved** only if the student gets it right without opening the
 solution; "first try" is counted separately. Both are stored only in that browser.

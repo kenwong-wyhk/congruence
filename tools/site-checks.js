@@ -75,10 +75,14 @@ async function runSiteChecks(opts = {}) {
     const lines = [...svg.querySelectorAll('.g-seg line')].map(l => ['x1', 'y1', 'x2', 'y2'].map(a => +l.getAttribute(a)));
     const texts = [...svg.querySelectorAll('text')].map(t => ({ t: t.textContent, b: t.getBBox(), lbl: t.classList.contains('lbl'), txt: t.classList.contains('txt') }));
     const marks = [...svg.querySelectorAll('.g-mark path')];
-    const markBoxes = marks.map(p => p.getBBox());
+    // Points along each mark. A letter is "on a mark" only if a point of the mark itself falls inside
+    // the letter: the mark's bounding box is not enough, since for a wide angle drawn at a slant the
+    // box reaches back past the corner to where the letter sits, well clear of the arc.
+    const markPts = marks.map(p => { const len = p.getTotalLength(), pts = []; for (let i = 0; i <= 48; i++) pts.push(p.getPointAtLength(len * i / 48)); return pts; });
+    const onMark = ib => markPts.some(pts => pts.some(q => q.x > ib.x && q.x < ib.x + ib.width && q.y > ib.y && q.y < ib.y + ib.height));
     texts.forEach(({ t, b, lbl, txt }) => {
       if (b.x < vb.x - 2 || b.y < vb.y - 2 || b.x + b.width > vb.x + vb.width + 2 || b.y + b.height > vb.y + vb.height + 2) out.figureProblems.push(tag + ': "' + t + '" off the picture');
-      if (lbl) { const ib = { x: b.x + 2, y: b.y + 3, width: b.width - 4, height: b.height - 6 }; if (markBoxes.some(m => inter(ib, m))) out.figureProblems.push(tag + ': letter ' + t + ' on an angle mark'); }
+      if (lbl) { const ib = { x: b.x + 2, y: b.y + 3, width: b.width - 4, height: b.height - 6 }; if (onMark(ib)) out.figureProblems.push(tag + ': letter ' + t + ' on an angle mark'); }
       if (txt && /°|^[a-z]$/.test(t)) for (const p of marks) {
         if (!/ A/.test(p.getAttribute('d'))) continue;
         const len = p.getTotalLength(); let hit = false;

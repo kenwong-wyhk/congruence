@@ -19,6 +19,7 @@
   --c1: var(--blue);
   --c2: var(--red);
   --c3: var(--gold);
+  --c4: var(--rule-grey);
   --font-display: Oswald, "Arial Narrow", sans-serif;
   --font-body: "Noto Sans HK", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
   --gutter: 16px;
@@ -236,6 +237,7 @@ table.proof tr.active td { background: var(--blue-tint-2); }
 table.proof tr.active[data-c="1"] td { background: #ccdaeb; }
 table.proof tr.active[data-c="2"] td { background: #f7cccf; }
 table.proof tr.active[data-c="3"] td { background: #f1e2d5; }
+table.proof tr.active[data-c="4"] td { background: #d9d9da; }
 table.proof tr.active[data-c="mix"] td { background: #ececed; }
 
 /* proof bank */

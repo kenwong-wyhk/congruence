@@ -7,6 +7,7 @@
     id: '5.3',
     title: 'Proofs related to Congruent Triangles',
     blurb: 'Finding hidden equal parts, writing full proofs, and using congruence to prove more.',
+    live: 's53-live.html',   // the step-through version shown in class
     traps: ['common', 'given', 'segadd', 'parallel', 'sides-opp', 'circular', 'rhs', 'asa-aas'],
     learn: [
       { title: 'The five conditions', key: '<b>SSS</b>, <b>SAS</b> (included angle), <b>ASA</b> (side between the angles), <b>AAS</b> (side not between), <b>RHS</b> (right angle, hypotenuse, side).<br>And two properties you use <b>after</b> proving: <b>corr. sides, ≅ △s</b> and <b>corr. ∠s, ≅ △s</b>.' },
@@ -96,10 +97,10 @@
         tip: 'There are 2 pairs of equal sides. Which condition can use them — SSS, SAS or RHS? Look for a right angle.',
         steps: [
           { t: 'In $\\triangle ABC$ and $\\triangle EDC$,' },
-          { s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s', hl: [['ACB', 'ECD', 1]] },
+          { s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s', hl: [['ACB', 'ECD', 3]] },
           { s: '= 90°' },
-          { s: 'AB = ED', r: 'given', hl: [['AB', 'ED', 2]] },
-          { s: 'AC = EC', r: 'given', hl: [['AC', 'EC', 3]] },
+          { s: 'AB = ED', r: 'given', hl: [['AB', 'ED', 1]] },   // the line's colour = its marks' colour
+          { s: 'AC = EC', r: 'given', hl: [['AC', 'EC', 2]] },
           { s: '∴ △ABC ≅ △EDC', r: 'RHS' },
         ],
       },
@@ -111,9 +112,9 @@
         tip: '$\\angle RQT = \\angle QRT$ makes $\\triangle TQR$ isosceles, so $QT = RT$ (sides opp. equal ∠s).',
         steps: [
           { t: 'In $\\triangle PQT$ and $\\triangle SRT$,' },
-          { s: '∠PQT = ∠SRT', r: 'given', hl: [['PQT', 'SRT', 1]] },
+          { s: '∠PQT = ∠SRT', r: 'given', hl: [['PQT', 'SRT', 2]] },   // red, like its double arcs
           { s: '∵ ∠RQT = ∠QRT', r: 'given' },
-          { s: '∴ QT = RT', r: 'sides opp. equal ∠s', hl: [['QT', 'RT', 2]] },
+          { s: '∴ QT = RT', r: 'sides opp. equal ∠s', hl: [['QT', 'RT', 1]] },
           { s: '∠PTQ = ∠STR', r: 'vert. opp. ∠s', hl: [['PTQ', 'STR', 3]] },
           { s: '∴ △PQT ≅ △SRT', r: 'ASA' },
         ],
@@ -152,12 +153,12 @@
           { s: '∠AED + ∠EAD = ∠ADC', r: 'ext. ∠ of △' },
           { s: '∠AED = ∠ADC − ∠EAD' },
           { s: '∵ ∠BAC = ∠EAD\\text{ and }∠ACD = ∠ADC', r: 'given' },
-          { s: '∴ ∠ABC = ∠AED', hl: [['ABC', 'AED', 1]] },
+          { s: '∴ ∠ABC = ∠AED', hl: [['ABC', 'AED', 3]] },
           { t: '(b) In $\\triangle ABC$ and $\\triangle AED$,' },
-          { s: '∠ABC = ∠AED', r: 'proved in (a)', hl: [['ABC', 'AED', 1]] },
-          { s: '∠BAC = ∠EAD', r: 'given', hl: [['BAC', 'EAD', 2]] },
+          { s: '∠ABC = ∠AED', r: 'proved in (a)', hl: [['ABC', 'AED', 3]] },
+          { s: '∠BAC = ∠EAD', r: 'given', hl: [['BAC', 'EAD', 1]] },   // blue, like its arcs
           { s: '∵ ∠ACD = ∠ADC', r: 'given' },
-          { s: '∴ AC = AD', r: 'sides opp. equal ∠s', hl: [['AC', 'AD', 3]] },
+          { s: '∴ AC = AD', r: 'sides opp. equal ∠s', hl: [['AC', 'AD', 2]] },
           { s: '∴ △ABC ≅ △AED', r: 'AAS' },
         ],
         after: '<b>Another way for (b):</b> from (a), $AB = AE$ (sides opp. equal ∠s, in △ABE). With $\\angle BAC = \\angle EAD$ and $\\angle ABC = \\angle AED$, the condition is ASA.',

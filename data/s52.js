@@ -1,6 +1,8 @@
 'use strict';
 /* Section 5.2 Conditions for Congruent Triangles */
 (() => {
+  // cols: a pair whose mark count would repeat another pair's colour is drawn in gold, so the
+  // three pairs in SAS, ASA and AAS always show three different colours
   const pair = (marks) => Object.assign({ w: 340, h: 150, make: [{ tri: 'ABC', ang: [60, 45, 75], box: [15, 15, 140, 120] }], derive: [{ src: 'ABC', dst: 'XYZ', shift: [175, 0] }], polys: ['ABC', 'XYZ'] }, marks);
   const rpair = Object.assign({ w: 340, h: 150, make: [{ tri: 'ABC', ang: [55, 35, 90], box: [15, 15, 140, 120] }], derive: [{ src: 'ABC', dst: 'XYZ', shift: [175, 0] }], polys: ['ABC', 'XYZ'] },
     { rights: ['ACB', 'XZY'], ticks: { AB: 1, XY: 1, BC: 2, YZ: 2 } });
@@ -9,13 +11,14 @@
     id: '5.2',
     title: 'Conditions for Congruent Triangles',
     blurb: 'SSS, SAS, ASA, AAS and RHS — and why SSA and AAA do not work.',
+    live: 's52-live.html',   // the step-through version shown in class
     traps: ['ssa', 'aaa', 'included', 'rhs', 'asa-aas', 'given', 'common', 'order'],
     learn: [
       { p: 'To show two triangles are congruent, you do <b>not</b> need all six pairs of equal parts. Any one of these five sets of three pairs is enough.' },
       { title: '1. SSS (side, side, side)', key: 'If $AB = XY$, $BC = YZ$ and $CA = ZX$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>SSS</b>].', fig: pair({ ticks: { AB: 1, XY: 1, BC: 2, YZ: 2, CA: 3, ZX: 3 } }) },
-      { title: '2. SAS (side, angle, side)', key: 'If $AB = XY$, $\\angle BAC = \\angle YXZ$ and $AC = XZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>SAS</b>].<br>The angle must be the <b>included angle</b> — the angle <b>between</b> the two sides.', fig: pair({ ticks: { AB: 1, XY: 1, AC: 2, XZ: 2 }, arcs: { CAB: 1, ZXY: 1 } }) },
-      { title: '3. ASA (angle, side, angle)', key: 'If $\\angle BAC = \\angle YXZ$, $AB = XY$ and $\\angle ABC = \\angle XYZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>ASA</b>].<br>The side is <b>between</b> the two angles.', fig: pair({ ticks: { AB: 1, XY: 1 }, arcs: { CAB: 1, ZXY: 1, ABC: 2, XYZ: 2 } }) },
-      { title: '4. AAS (angle, angle, side)', key: 'If $\\angle BAC = \\angle YXZ$, $\\angle ABC = \\angle XYZ$ and $BC = YZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>AAS</b>].<br>The side is <b>not</b> between the two angles.', fig: pair({ ticks: { BC: 1, YZ: 1 }, arcs: { CAB: 1, ZXY: 1, ABC: 2, XYZ: 2 } }) },
+      { title: '2. SAS (side, angle, side)', key: 'If $AB = XY$, $\\angle BAC = \\angle YXZ$ and $AC = XZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>SAS</b>].<br>The angle must be the <b>included angle</b> — the angle <b>between</b> the two sides.', fig: pair({ ticks: { AB: 1, XY: 1, AC: 2, XZ: 2 }, arcs: { CAB: 1, ZXY: 1 }, cols: { CAB: 3, ZXY: 3 } }) },
+      { title: '3. ASA (angle, side, angle)', key: 'If $\\angle BAC = \\angle YXZ$, $AB = XY$ and $\\angle ABC = \\angle XYZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>ASA</b>].<br>The side is <b>between</b> the two angles.', fig: pair({ ticks: { AB: 1, XY: 1 }, arcs: { CAB: 1, ZXY: 1, ABC: 2, XYZ: 2 }, cols: { AB: 3, XY: 3 } }) },
+      { title: '4. AAS (angle, angle, side)', key: 'If $\\angle BAC = \\angle YXZ$, $\\angle ABC = \\angle XYZ$ and $BC = YZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>AAS</b>].<br>The side is <b>not</b> between the two angles.', fig: pair({ ticks: { BC: 1, YZ: 1 }, arcs: { CAB: 1, ZXY: 1, ABC: 2, XYZ: 2 }, cols: { BC: 3, YZ: 3 } }) },
       { title: '5. RHS (right angle, hypotenuse, side)', key: 'If $\\angle ACB = \\angle XZY = 90^\\circ$, $AB = XY$ (the <b>hypotenuses</b>) and $BC = YZ$, then $\\triangle ABC \\cong \\triangle XYZ$ &nbsp;[<b>RHS</b>].', fig: rpair },
       { h: 'Why these, and not others?' },
       { demo: 'explorer' },
@@ -84,8 +87,8 @@
           { s: '∠BAC + 70° + 66° = 180°', r: '∠ sum of △' },
           { s: '∠BAC = 44°' },
           { t: 'In $\\triangle ABC$ and $\\triangle EFD$,' },
-          { s: '∠BAC = ∠FED', r: '', hl: [['BAC', 'FED', 1]] },
-          { s: 'AC = ED', r: 'given', hl: [['AC', 'ED', 2]] },
+          { s: '∠BAC = ∠FED', r: '', hl: [['BAC', 'FED', 2]] },
+          { s: 'AC = ED', r: 'given', hl: [['AC', 'ED', 1]] },   // blue, like its ticks
           { s: '∠ACB = ∠EDF', r: 'given', hl: [['ACB', 'EDF', 3]] },
           { s: '∴ △ABC ≅ △EFD', r: 'ASA' },
         ],
@@ -113,9 +116,9 @@
         tip: 'Both triangles have a right angle, and they share the side $PR$ — which is the hypotenuse of each.',
         steps: [
           { t: '(a) In $\\triangle PQR$ and $\\triangle PSR$,' },
-          { s: '∠PQR = ∠PSR = 90°', r: 'given', hl: [['PQR', 'PSR', 1]] },
+          { s: '∠PQR = ∠PSR = 90°', r: 'given', hl: [['PQR', 'PSR', 3]] },
           { s: 'PR = PR', r: 'common side', hl: [['PR', 2]] },
-          { s: 'QR = SR', r: 'given', hl: [['QR', 'SR', 3]] },
+          { s: 'QR = SR', r: 'given', hl: [['QR', 'SR', 1]] },   // blue, like its ticks
           { s: '∴ △PQR ≅ △PSR', r: 'RHS' },
           { t: '(b) In $\\triangle PSR$,' },
           { s: '∠SRP + 31° + 90° = 180°', r: '∠ sum of △' },

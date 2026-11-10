@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.3 Proofs Live</title>
+<meta name="description" content="Live version of F2 Ch5 section 5.3, for teaching from the front of the room.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- everything is served from this site: no third-party requests -->
+<link rel="stylesheet" href="css/fonts.css?v=18d89dea">
+<link rel="stylesheet" href="vendor/katex/katex.min.css?v=3f94e1b7">
+<link rel="stylesheet" href="live/live.css?v=a58df557">
+<link rel="stylesheet" href="live/lesson.css?v=604f3930">
+<style>
+/* Styles for this lesson only. Shared lesson styles: live/lesson.css; the engine's: live/live.css. */
+.minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; align-items: start; }
+.mini .fig { max-height: 30vh; }
+.mini .see { font-size: 1.25rem; color: var(--ink-muted); margin: .6rem 0 .2rem; }
+.mini .write { font-size: 1.6rem; margin: 0; }
+.mini .why { font-size: 1.2rem; font-weight: 400; margin: .2rem 0 0; }
+.display.mid { font-size: 2.7rem; line-height: 1.2; }
+.cycle .node h3 { font-size: 2.6rem; }
+#addSvg { max-height: 40vh; }
+#addSvg text { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 40px; text-anchor: middle; dominant-baseline: central; }
+#addSvg text.cap { font-family: var(--font-sans); font-style: normal; font-weight: 400; font-size: 30px; }
+/* the two brackets draw in on their steps (pathLength 1 makes the dash run the whole length) */
+#addSvg .brk path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.4s var(--ease); }
+#addSvg .brk text { opacity: 0; transition: opacity .6s .9s; }
+#addSvg .brk.shown path { stroke-dashoffset: 0; }
+#addSvg .brk.shown text { opacity: 1; }
+#addSvg [data-step] { transform: none; }
+.figbox.tall .fig { max-height: 56vh; }
+</style>
+</head>
+<!-- data-reading links back to the reading version (the 5.3 page of the self-study site). -->
+<body data-reading="index.html#/s/5.3">
+
+<!-- 1 Title -->
+<section class="scene blue title">
+  <span class="cross-v"></span><span class="cross-h"></span>
+  <div class="body">
+    <p class="kicker in" style="--i:5">F2 MATHEMATICS · CH5 CONGRUENCE · SECTION 5.3</p>
+    <h1 class="display huge in" style="--i:7">Proofs related to Congruent Triangles</h1>
+    <p class="in" style="--i:9">The question gives two pairs. The third is hiding in the figure.</p>
+    <p class="kicker in" style="--i:14">Press → to begin</p>
+  </div>
+  <div class="foot bare"><h2></h2></div>
+</section>
+
+<!-- 2 Where we are -->
+<section class="scene">
+  <div class="body">
+    <p class="display big blue-text narrow in" style="--i:1">Most questions give you two pairs of equal parts.</p>
+    <p class="q" data-step="1">A condition needs <strong>three</strong>: SSS, SAS, ASA, AAS or RHS.</p>
+    <p class="q" data-step="2">So the third pair is <strong>hidden in the figure</strong>. Today: where to look for it, and what to write.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | The missing pair</h2></div>
+</section>
+
+<!-- 3 Hidden parts 1: shared and crossing -->
+<section class="scene">
+  <div class="body">
+    <p class="kicker in" style="--i:1">WHERE TO LOOK · 1</p>
+    <div class="minis">
+      <div class="mini in" style="--i:2"><div id="h1a"></div><p class="see">A side in both triangles</p><p class="write">$BD = BD$</p><p class="why">common side</p></div>
+      <div class="mini" data-step="1"><div id="h1b"></div><p class="see">An angle in both triangles</p><p class="write">$\angle CAE = \angle DAB$</p><p class="why">common ∠</p></div>
+      <div class="mini" data-step="2"><div id="h1c"></div><p class="see">Two straight lines crossing</p><p class="write">$\angle ACB = \angle ECD$</p><p class="why">vert. opp. ∠s</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Hidden parts</h2></div>
+</section>
+
+<!-- 4 Hidden parts 2: inside one triangle -->
+<section class="scene">
+  <div class="body">
+    <p class="kicker in" style="--i:1">WHERE TO LOOK · 2</p>
+    <div class="minis">
+      <div class="mini in" style="--i:2"><div id="h2a"></div><p class="see">Two equal angles in one triangle</p><p class="write">$EB = EC$</p><p class="why">sides opp. equal ∠s</p></div>
+      <div class="mini" data-step="1"><div id="h2b"></div><p class="see">Two equal sides in one triangle</p><p class="write">$\angle EBC = \angle ECB$</p><p class="why">base ∠s, isos. △</p></div>
+      <div class="mini" data-step="2"><div id="h2c"></div><p class="see">Two known angles of a triangle</p><p class="write">$\angle BAC = 180^\circ - 70^\circ - 50^\circ$</p><p class="why">∠ sum of △</p></div>
+    </div>
+    <p class="note" data-step="3">The first two go opposite ways. Equal angles give equal <strong>sides</strong>; equal sides give equal <strong>angles</strong>. Choose the one you need.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Hidden parts</h2></div>
+</section>
+
+<!-- 5 Hidden parts 3: facts in the question -->
+<section class="scene">
+  <div class="body">
+    <p class="kicker in" style="--i:1">WHERE TO LOOK · 3</p>
+    <div class="minis">
+      <div class="mini in" style="--i:2"><div id="h3a"></div><p class="see">Parallel lines (only if given)</p><p class="write">$\angle BAC = \angle DEC$</p><p class="why">alt. ∠s, AB // DE</p></div>
+      <div class="mini" data-step="1"><div id="h3b"></div><p class="see">A mid-point (given)</p><p class="write">$BC = DC$</p><p class="why">given, not "common side"</p></div>
+      <div class="mini" data-step="2"><div id="h3c"></div><p class="see">An angle on a straight line</p><p class="write">$\angle ADB = 180^\circ - \angle ADE$</p><p class="why">adj. ∠s on st. line</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Hidden parts</h2></div>
+</section>
+
+<!-- 6 Spot the hidden parts: build a proof together -->
+<section class="scene">
+  <div class="body tight">
+    <div class="pair wide-fig">
+      <div class="stack">
+        <p class="q in" style="--i:1">$AE$ and $BD$ meet at $C$, $AB // DE$ and $AC = CE$. Which three facts make a condition?</p>
+        <div class="figbox in" style="--i:2" id="spotFig"></div>
+      </div>
+      <div class="stack">
+        <div id="spotProof"></div>
+        <p class="note" data-step="6">Angle at $A$, side $AC$, angle at $C$: the side is <strong>between</strong> the two angles, so it is ASA.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Spot the hidden parts</h2></div>
+</section>
+
+<!-- 7 Quick check: is ASA the only way? -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="qcFig"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">Same figure. Which of these can be a correct reason for $\triangle ABC \cong \triangle EDC$?</p>
+        <p class="q in" style="--i:3">I. SAS &nbsp;&nbsp; II. ASA &nbsp;&nbsp; III. AAS</p>
+        <div class="row in" style="--i:4"><div><div class="who">Alone</div><button class="timer" data-sec="120"></button></div>
+          <div class="btns choice opts"><button class="btn"><span class="opt">A</span>I, II</button><button class="btn"><span class="opt">B</span>I, III</button><button class="btn"><span class="opt">C</span>II, III</button><button class="btn"><span class="opt">D</span>I, II, III</button></div></div>
+        <p class="note" data-step="1">The next screen shows the answer. Has everyone chosen?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Quick check</h2></div>
+</section>
+
+<!-- 8 Reveal: quick check -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display big in" style="--i:1">C: II and III only.</p>
+    <p class="in" style="--i:2"><strong>ASA</strong>: $\angle BAC = \angle DEC$ (alt. ∠s), $AC = EC$ (given), $\angle ACB = \angle ECD$ (vert. opp. ∠s).</p>
+    <p class="in" style="--i:3"><strong>AAS</strong>: $\angle ABC = \angle EDC$ (alt. ∠s), $\angle ACB = \angle ECD$ (vert. opp. ∠s), $AC = EC$ (given).</p>
+    <p class="rule" data-step="1"><strong>SAS</strong> would need $BC = DC$, which nothing tells us.</p>
+  </div>
+  <div class="foot"><h2>5.3 | Quick check answer</h2></div>
+</section>
+
+<!-- 9 Strategy -->
+<section class="scene">
+  <div class="body">
+    <p class="display big blue-text in" style="--i:1">Five steps for every proof</p>
+    <div class="cycle" style="--n:5">
+      <div class="node" data-step="1"><div class="n">1</div><h3>Split</h3><p>Which two triangles?</p></div>
+      <div class="node" data-step="2"><div class="n">2</div><h3>Mark</h3><p>Put the given facts on the figure.</p></div>
+      <div class="node" data-step="3"><div class="n">3</div><h3>Hunt</h3><p>Find the hidden pair.</p></div>
+      <div class="node" data-step="4"><div class="n">4</div><h3>Match</h3><p>Two sides: SSS, SAS, RHS. A side and angles: ASA, AAS.</p></div>
+      <div class="node" data-step="5"><div class="n">5</div><h3>Write</h3><p>Matching vertex order, a reason on every line.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Strategy</h2></div>
+</section>
+
+<!-- 10 Example 1 (alone) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex1FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">$ACE$ and $BCD$ are straight lines. $AB = ED$, $AC = EC$ and $\angle DCE = 90^\circ$. Prove that $\triangle ABC \cong \triangle EDC$.</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="180"></button></div><p>Two pairs of sides are given. Which condition can use them?</p></div>
+        <p data-step="1"><strong>Hint.</strong> Look for a right angle in $\triangle ABC$.</p>
+        <p class="note" data-step="2">The next screen shows the proof. Is yours written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 1</h2></div>
+</section>
+
+<!-- 11 Solution: example 1 -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex1Fig"></div>
+      <div id="ex1Proof"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 1: proof</h2></div>
+</section>
+
+<!-- 12 Example 2 (team, commit) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2FigQ"></div>
+      <div class="rows compact">
+        <p class="q in" style="--i:2">$PTR$ and $QTS$ are straight lines. $\angle RQT = \angle QRT$ and $\angle PQT = \angle SRT$. Prove that $\triangle PQT \cong \triangle SRT$.</p>
+        <div class="row in" style="--i:3"><div><div class="who">Alone</div><button class="timer" data-sec="120"></button></div><p>Only one pair is marked for the two triangles. Hunt for two more.</p></div>
+        <div class="row" data-step="1"><div><div class="who">Team</div><button class="timer" data-sec="180"></button></div><p>Agree on the proof.</p></div>
+        <div class="row" data-step="2"><div><div class="who">Commit</div></div><div class="btns choice"><button class="btn">SAS</button><button class="btn">ASA</button><button class="btn">AAS</button></div></div>
+        <p class="note" data-step="3">The next screen shows the proof. Has every team committed?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 2</h2></div>
+</section>
+
+<!-- 13 Solution: example 2 -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex2Fig"></div>
+      <div class="stack">
+        <div id="ex2Proof"></div>
+        <p class="note" data-step="7">$\angle RQT = \angle QRT$ is about $\triangle TQR$, not our two triangles. It gives the hidden pair $QT = RT$.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 2: proof</h2></div>
+</section>
+
+<!-- 14 Trick: equal pieces added on (step-driven drawing) -->
+<section class="scene">
+  <div class="body">
+    <p class="q in" style="--i:1">$AEFD$ is a straight line and $AE = FD$. Is $AF = ED$?</p>
+    <div class="in" style="--i:2">
+      <svg id="addSvg" viewBox="0 0 1000 320" role="img" aria-label="A straight line A E F D. AE and FD are equal; EF is shared. A bracket over AF and one under ED show both are a short piece plus EF.">
+        <line x1="80" y1="160" x2="920" y2="160" stroke="var(--ink)" stroke-width="3"/>
+        <line x1="80" y1="160" x2="320" y2="160" stroke="var(--c1)" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+        <line x1="680" y1="160" x2="920" y2="160" stroke="var(--c1)" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+        <line x1="320" y1="160" x2="680" y2="160" stroke="var(--c3)" stroke-width="12" opacity=".55"/>
+        <line x1="200" y1="146" x2="200" y2="174" stroke="var(--c1)" stroke-width="4"/>
+        <line x1="800" y1="146" x2="800" y2="174" stroke="var(--c1)" stroke-width="4"/>
+        <circle cx="80" cy="160" r="7" fill="var(--ink)"/><circle cx="320" cy="160" r="7" fill="var(--ink)"/><circle cx="680" cy="160" r="7" fill="var(--ink)"/><circle cx="920" cy="160" r="7" fill="var(--ink)"/>
+        <text x="80" y="200">A</text><text x="320" y="200">E</text><text x="680" y="200">F</text><text x="920" y="200">D</text>
+        <g class="brk" data-step="1">
+          <path d="M80 110 V85 H680 V110" pathLength="1" fill="none" stroke="var(--blue)" stroke-width="4"/>
+          <text class="cap" x="380" y="52">AF = AE + EF</text>
+        </g>
+        <g class="brk" data-step="2">
+          <path d="M320 225 V250 H920 V225" pathLength="1" fill="none" stroke="var(--blue)" stroke-width="4"/>
+          <text class="cap" x="620" y="290">ED = EF + FD</text>
+        </g>
+      </svg>
+    </div>
+    <div class="pair">
+      <div data-step="3" id="addProof"></div>
+      <p class="note" data-step="4">$AF$ and $ED$ are not given equal. Add the same piece $EF$ to two equal pieces, and <strong>show</strong> the working.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Equal pieces added on</h2></div>
+</section>
+
+<!-- 15 Example 3 (pairs) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox tall in" style="--i:1" id="ex3FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">$AEFD$, $BGF$ and $EGC$ are straight lines. $AB // EC$, $AB = EC$ and $AE = FD$.</p>
+        <p class="q in" style="--i:3">(a) Prove that $\triangle ABF \cong \triangle ECD$.<br>(b) Is $BF // CD$? Explain your answer.</p>
+        <div class="row in" style="--i:4"><div><div class="who">Pairs</div><button class="timer" data-sec="300"></button></div><p>Use the trick from the last screen for (a).</p></div>
+        <p class="note" data-step="1">The next screen shows (a). Are both parts written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 3</h2></div>
+</section>
+
+<!-- 16 Solution (a) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox tall in" style="--i:1" id="ex3FigA"></div>
+      <div id="ex3ProofA"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 3: solution (a)</h2></div>
+</section>
+
+<!-- 17 After proving congruence -->
+<section class="scene">
+  <div class="body">
+    <p class="display big blue-text narrow in" style="--i:1">After proving two triangles congruent, you can prove more.</p>
+    <div class="row" data-step="1"><div class="who">Equal parts</div><div><p class="q">The other sides and angles match.</p><p class="muted">corr. sides, ≅ △s &nbsp;·&nbsp; corr. ∠s, ≅ △s</p></div></div>
+    <div class="row" data-step="2"><div class="who">Parallel lines</div><div><p class="q">Equal corresponding or alternate angles prove two lines parallel.</p><p class="muted">corr. ∠s equal &nbsp;·&nbsp; alt. ∠s equal</p></div></div>
+    <p class="note" data-step="3">To <strong>prove</strong> lines parallel, the reason has no "//" in it. "corr. ∠s, BF // CD" would use what you are trying to prove.</p>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | After proving</h2></div>
+</section>
+
+<!-- 18 Solution (b) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-fig">
+      <div class="figbox tall in" style="--i:1" id="ex3FigB"></div>
+      <div id="ex3ProofB"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Example 3: solution (b)</h2></div>
+</section>
+
+<!-- 19 Harder: example 4 -->
+<section class="scene">
+  <div class="body tight">
+    <div class="pair wide-fig">
+      <div class="figbox in" style="--i:1" id="ex4FigQ"></div>
+      <div class="stack">
+        <p class="q in" style="--i:2">$BCDE$ is a straight line. $\angle BAC = \angle EAD$ and $\angle ACD = \angle ADC$.</p>
+        <p class="q in" style="--i:3">(a) Prove that $\angle ABC = \angle AED$.<br>(b) Prove that $\triangle ABC \cong \triangle AED$.</p>
+        <div class="row in" style="--i:4"><div><div class="who">Pairs</div><button class="timer" data-sec="360"></button></div><p>For (b), use what you proved in (a).</p></div>
+        <p data-step="1"><strong>Hint.</strong> $\angle ACD$ is an exterior angle of $\triangle ABC$.</p>
+        <p class="note" data-step="2">The next screen shows (a). Are both parts written down?</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Harder</h2></div>
+</section>
+
+<!-- 20 Solution (a) -->
+<section class="scene">
+  <div class="body tight">
+    <div class="pair wide-proof">
+      <div class="figbox in" style="--i:1" id="ex4FigA"></div>
+      <div id="ex4ProofA"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Harder: solution (a)</h2></div>
+</section>
+
+<!-- 21 Solution (b) -->
+<section class="scene">
+  <div class="body">
+    <div class="pair wide-proof">
+      <div class="figbox in" style="--i:1" id="ex4FigB"></div>
+      <div class="stack">
+        <div id="ex4ProofB"></div>
+        <p class="note" data-step="6">Another way: from (a), $AB = AE$ (sides opp. equal ∠s), and then ASA.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Harder: solution (b)</h2></div>
+</section>
+
+<!-- 22 Summary -->
+<section class="scene">
+  <div class="body">
+    <div class="rules">
+      <div class="r1 in" style="--i:1"><span class="n">1</span><div><p>Hunt for the hidden pair.</p><p class="sub">Common side or ∠, vert. opp. ∠s, an isosceles triangle, parallel lines, a straight line, equal pieces added on.</p></div></div>
+      <div class="r1" data-step="1"><span class="n">2</span><div><p>Use only what is given or proved.</p><p class="sub">Never use a result of the congruence to prove the congruence.</p></div></div>
+      <div class="r1" data-step="2"><span class="n">3</span><div><p>After the congruence, prove more.</p><p class="sub">corr. sides, ≅ △s · corr. ∠s, ≅ △s · corr. ∠s equal / alt. ∠s equal for parallel lines.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="where">F2 Ch5 Congruence</span><h2>5.3 | Today</h2></div>
+</section>
+
+<!-- 23 After class -->
+<section class="scene blue">
+  <div class="body">
+    <p class="display huge in" style="--i:1">After class</p>
+    <p class="in" style="--i:2">On the self-study site, section 5.3: <strong>Learn</strong> (tap the hidden-parts table), <strong>Practice</strong> (11 proofs to build) and <strong>Traps</strong>.</p>
+    <p class="kicker in" style="--i:5">NEXT: 5.4 CONGRUENT 2-D FIGURES</p>
+  </div>
+  <div class="foot"><h2>5.3 | Practise</h2></div>
+</section>
+
+<script src="vendor/katex/katex.min.js?v=4881bfc9"></script>
+<script src="js/core.js?v=eb489902"></script>
+<script src="js/geom.js?v=1c7cddc4"></script>
+<script src="js/check.js?v=b1e47a74"></script>
+<script src="js/question.js?v=e4308582"></script>
+<script src="live/live.js?v=4d78ca3d"></script>
+<script src="live/lesson.js?v=ef6bdcf3"></script>
+<script>
+'use strict';
+const { $, figInto, solution } = L5;
+
+/* ---------- Where to look: the same small figures as the reading version's table (data/s53.js) ---------- */
+const BOW = { w: 260, h: 195, pts: { A: [40, 30], B: [200, 30], C: [130, 100], D: [60, 170], E: [220, 170] }, polys: ['ABC', 'EDC'] };
+const ISO = { w: 280, h: 170, pts: { E: [140, 25], B: [40, 145], C: [240, 145] }, polys: ['EBC'] };
+figInto('h1a', { w: 300, h: 200, pts: { B: [30, 100], D: [270, 100], A: [110, 30], C: [110, 170] }, polys: ['ABD', 'CBD'] }, [['BD', 1]]);
+figInto('h1b', { w: 290, h: 220, pts: { A: [30, 110], B: [132, 68.8], C: [252.5, 20], E: [132, 151.2], D: [252.5, 200] }, polys: ['ACE', 'ADB'], lines: ['ABC', 'AED'] }, [['CAE', 1]]);
+figInto('h1c', BOW, [['ACB', 1], ['ECD', 1]]);
+figInto('h2a', Object.assign({ arcs: { EBC: 1, ECB: 1 } }, ISO), [['EBC', 1], ['ECB', 1], ['EB', 2], ['EC', 2]]);
+figInto('h2b', Object.assign({ ticks: { EB: 1, EC: 1 } }, ISO), [['EB', 1], ['EC', 1], ['EBC', 2], ['ECB', 2]]);
+figInto('h2c', { w: 280, h: 170, make: [{ tri: 'ABC', ang: [60, 70, 50], box: [40, 15, 200, 140] }], polys: ['ABC'], at: { ABC: '70°', BCA: '50°' } }, [['BAC', 1]]);
+figInto('h3a', Object.assign({ arrows: { AB: 1, DE: 1 } }, BOW), [['BAC', 1], ['DEC', 1]]);
+figInto('h3b', { w: 320, h: 165, pts: { A: [60, 30], E: [260, 30], B: [30, 140], D: [290, 140], C: [160, 140] }, polys: ['ABC', 'EDC'], lines: ['BCD'], dots: 'C' }, [['BC', 1], ['CD', 1]]);
+figInto('h3c', { w: 300, h: 200, pts: { E: [30, 100], D: [110, 100], B: [280, 100], A: [160, 30], C: [160, 170] }, polys: ['ABD', 'CBD'], lines: ['EDB'] }, [['ADE', 1], ['ADB', 2]]);
+
+/* ---------- Spot the hidden parts (the reading version's toggle demo, as proof lines) ---------- */
+const BOWTIE = Object.assign({ arrows: { AB: 1, DE: 1 }, ticks: { AC: 1, CE: 1 } }, BOW);
+solution('spotFig', 'spotProof', BOWTIE, [
+  { t: 'In $\\triangle ABC$ and $\\triangle EDC$,' },
+  { s: '∠BAC = ∠DEC', r: 'alt. ∠s, AB // DE', hl: [['BAC', 'DEC', 3]] },
+  { s: 'AC = EC', r: 'given', hl: [['AC', 'CE', 1]] },
+  { s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s', hl: [['ACB', 'ECD', 2]] },
+  { s: '∴ △ABC ≅ △EDC', r: 'ASA' },
+]);
+figInto('qcFig', BOWTIE);
+
+/* ---------- Example 1 ---------- */
+const EX1 = { w: 300, h: 220, make: [{ tri: 'ABC', ang: [35, 55, 90], box: [20, 15, 140, 100] }], derive: [{ src: 'ABC', dst: 'EDC', rot: 180, around: 'C' }], polys: ['ABC', 'EDC'], rights: ['DCE'], ticks: { AB: 1, ED: 1, AC: 2, EC: 2 } };
+figInto('ex1FigQ', EX1);
+solution('ex1Fig', 'ex1Proof', EX1, [
+  { t: 'In $\\triangle ABC$ and $\\triangle EDC$,' },
+  { s: '∠ACB = ∠ECD', r: 'vert. opp. ∠s', hl: [['ACB', 'ECD', 3]] },
+  { s: '= 90°' },
+  { s: 'AB = ED', r: 'given', hl: [['AB', 'ED', 1]] },
+  { s: 'AC = EC', r: 'given', hl: [['AC', 'EC', 2]] },
+  { s: '∴ △ABC ≅ △EDC', r: 'RHS' },
+]);
+
+/* ---------- Example 2 ---------- */
+const EX2 = { w: 320, h: 195, pts: { Q: [90, 170], R: [230, 170], T: [160, 105], P: [76, 27], S: [244, 27] }, polys: ['PQT', 'SRT'], lines: ['QR'], arcs: { RQT: 1, QRT: 1, PQT: 2, SRT: 2 } };
+figInto('ex2FigQ', EX2);
+solution('ex2Fig', 'ex2Proof', EX2, [
+  { t: 'In $\\triangle PQT$ and $\\triangle SRT$,' },
+  { s: '∠PQT = ∠SRT', r: 'given', hl: [['PQT', 'SRT', 2]] },
+  { s: '∵ ∠RQT = ∠QRT', r: 'given', hl: [['RQT', 'QRT', 1]] },
+  { s: '∴ QT = RT', r: 'sides opp. equal ∠s', hl: [['QT', 'RT', 1]] },
+  { s: '∠PTQ = ∠STR', r: 'vert. opp. ∠s', hl: [['PTQ', 'STR', 3]] },
+  { s: '∴ △PQT ≅ △SRT', r: 'ASA' },
+]);
+
+/* ---------- Equal pieces added on: the working, under the drawing ---------- */
+(function () {
+  const t = QR.proofTable([{ s: '∵ AE = FD', r: 'given' }, { s: '∴ AE + EF = FD + EF' }, { s: '∴ AF = ED' }], {}, []);
+  $('addProof').append(t);
+})();
+
+/* ---------- Example 3 ---------- */
+const EX3 = { w: 260, h: 215, pts: { A: [20, 30], B: [130, 30], E: [75, 70], C: [185, 70], F: [185, 150], D: [240, 190], G: [148.3, 70] }, polys: ['ABF', 'ECD'], lines: ['AEFD', 'BGF', 'EGC'], arrows: { AB: 1, EC: 1 }, ticks: { AB: 1, EC: 1, AE: 2, FD: 2 }, lab: { G: [8, -10] } };
+figInto('ex3FigQ', EX3);
+solution('ex3FigA', 'ex3ProofA', EX3, [
+  { t: '(a) In $\\triangle ABF$ and $\\triangle ECD$,', fixed: true },
+  { s: 'AB = EC', r: 'given', hl: [['AB', 'EC', 1]] },
+  { s: '∠BAF = ∠CED', r: 'corr. ∠s, AB // EC', hl: [['BAF', 'CED', 3]] },
+  { s: '∵ AE = FD', r: 'given', hl: [['AE', 'FD', 2]] },
+  { s: '∴ AE + EF = FD + EF' },
+  { s: '∴ AF = ED', hl: [['AF', 'ED', 2]] },
+  { s: '∴ △ABF ≅ △ECD', r: 'SAS' },
+]);
+solution('ex3FigB', 'ex3ProofB', EX3, [
+  { t: '(b)', fixed: true },
+  { s: '∵ △ABF ≅ △ECD', r: 'proved in (a)' },
+  { s: '∴ ∠BFA = ∠CDE', r: 'corr. ∠s, ≅ △s', hl: [['BFA', 'CDE', 1]] },
+  { s: '∴ BF // CD', r: 'corr. ∠s equal' },
+  { t: 'Yes, $BF // CD$.' },
+]);
+
+/* ---------- Example 4 ---------- */
+const EX4 = { w: 300, h: 180, pts: { A: [150, 25], B: [20, 160], C: [105, 160], D: [195, 160], E: [280, 160] }, polys: ['ABC', 'AED'], lines: ['BCDE'], arcs: { BAC: 1, EAD: 1, ACD: 2, ADC: 2 } };
+figInto('ex4FigQ', EX4);
+solution('ex4FigA', 'ex4ProofA', EX4, [
+  { t: '(a) In $\\triangle ABC$,', fixed: true },
+  { s: '∠ABC + ∠BAC = ∠ACD', r: 'ext. ∠ of △', hl: [['ACD', 2], ['BAC', 1], ['ABC', 3]] },
+  { s: '∠ABC = ∠ACD − ∠BAC' },
+  { t: 'In $\\triangle ADE$,' },
+  { s: '∠AED + ∠EAD = ∠ADC', r: 'ext. ∠ of △', hl: [['ADC', 2], ['EAD', 1], ['AED', 3]] },
+  { s: '∠AED = ∠ADC − ∠EAD' },
+  { s: '∵ ∠BAC = ∠EAD', r: 'given' },
+  { s: '\\text{and }∠ACD = ∠ADC', r: 'given' },
+  { s: '∴ ∠ABC = ∠AED', hl: [['ABC', 'AED', 3]] },
+]);
+solution('ex4FigB', 'ex4ProofB', EX4, [
+  { t: '(b) In $\\triangle ABC$ and $\\triangle AED$,', fixed: true },
+  { s: '∠ABC = ∠AED', r: 'proved in (a)', hl: [['ABC', 'AED', 3]] },
+  { s: '∠BAC = ∠EAD', r: 'given', hl: [['BAC', 'EAD', 1]] },
+  { s: '∵ ∠ACD = ∠ADC', r: 'given', hl: [['ACD', 'ADC', 2]] },
+  { s: '∴ AC = AD', r: 'sides opp. equal ∠s', hl: [['AC', 'AD', 2]] },
+  { s: '∴ △ABC ≅ △AED', r: 'AAS' },
+]);
+</script>
+</body>
+</html>

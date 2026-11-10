@@ -8,103 +8,23 @@
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <!-- everything is served from this site: no third-party requests -->
-<link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="live/live.css">
+<link rel="stylesheet" href="css/fonts.css?v=18d89dea">
+<link rel="stylesheet" href="vendor/katex/katex.min.css?v=3f94e1b7">
+<link rel="stylesheet" href="live/live.css?v=a58df557">
+<link rel="stylesheet" href="live/lesson.css?v=604f3930">
 <style>
-/* Styles for this lesson only. Shared styles live in live/live.css. */
-:root {
-  --gold: #b96e2b; --rule-grey: #808285; --blue-tint: #eef3fa; --blue-tint-2: #dbe6f4;
-  /* corresponding-part colours, as on the reading site: lines and fills only, never text */
-  --c1: var(--blue); --c2: var(--red); --c3: var(--gold);
-  --font-body: var(--font-sans);
-}
-.katex { font-size: 1.08em; }
-.nobr { white-space: nowrap; }
-.foot .where { font-size: 1rem; font-weight: 400; color: var(--ink-muted); letter-spacing: .04em; white-space: nowrap; }
-
-/* Figures drawn by the site's own figure engine (js/geom.js) */
-.fig { display: block; width: 100%; height: auto; margin: 0 auto; max-width: none !important; }
-.fig .seg { stroke: var(--ink); stroke-width: 1.6; fill: none; stroke-linecap: round; }
-.fig .poly-fill { fill: none; }
-.fig .lbl { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 15px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
-.fig .txt { font-family: var(--font-sans); font-weight: 400; font-size: 12px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
-.fig .txt.var { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 14px; }
-.fig .mark { fill: none; stroke-width: 1.5; }
-.fig .dot { fill: var(--ink); }
-.fig .hl { opacity: .28; }
-.fig .hl-line { stroke-width: 10; stroke-linecap: round; fill: none; }
-.fig g.tri-g { transition: transform 1s var(--ease); }
-.split-fig .lbl.own, .split-fig .lbl.joined { transition: opacity .4s; }
-.split-fig .lbl.own { opacity: 0; }
-.split-fig.apart .lbl.own { opacity: 1; transition-delay: .5s; }
-.split-fig.apart .lbl.joined { opacity: 0; }
-.figbox { min-width: 0; }
-.figbox .fig { max-height: 58vh; }
-.figbox.small .fig { max-height: 40vh; }
-.layer { display: grid; }
-.layer > * { grid-area: 1 / 1; }
+/* Styles for this lesson only. Shared lesson styles: live/lesson.css; the engine's: live/live.css. */
 .modes > [data-layer] { opacity: 0; transition: opacity .6s var(--ease); }
 .modes[data-mode="0"] > [data-layer="0"], .modes[data-mode="1"] > [data-layer="1"],
 .modes[data-mode="2"] > [data-layer="2"], .modes[data-mode="3"] > [data-layer="3"] { opacity: 1; }
 .modes .fig .hl { opacity: .34; }
 .modes .fig .hl-line { stroke-width: 9; }
-
-/* Two columns: figure and words */
-.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3.5rem; align-items: center; }
-.pair.wide-fig { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
-.pair.wide-proof { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
-.tight .proof-group { font-size: 1.25rem; }
-.tight table.proof td { padding-top: .1rem; padding-bottom: .1rem; }
-.tight .figbox .fig { max-height: 40vh; }
-.tight .stack { gap: .8rem; }
 #fit0Svg { max-height: 34vh; }
 #fitSvg { max-height: 44vh; }
 #orderSvg { max-height: 36vh; }
-.q { font-size: 1.75rem; line-height: 1.4; margin: 0; }
-.stack { display: flex; flex-direction: column; gap: 1.2rem; }
-.rows .row:first-child { border-top: 0.07rem solid var(--frame); }
-
-/* Proof lines (built by the site's proofTable, so the equals signs align as on the reading site) */
-.proof-group { font-size: 1.45rem; }
-table.proof { border-collapse: collapse; width: auto; font-size: inherit; font-variant-numeric: normal; }
-table.proof td { padding: .2rem .5rem; border: 0; text-align: left; vertical-align: middle; }
-table.proof td.s { white-space: nowrap; }
-table.proof td.s-l { text-align: right; padding-right: 0; }
-table.proof td.s-r { padding-left: .28em; }
-table.proof td.r { border-left: 0.07rem solid var(--ink); font-size: 1.15rem; font-weight: 400; min-width: 10em; padding-left: .9rem; white-space: nowrap; }
-table.proof tr.text td { padding-top: .7rem; font-weight: 400; }
-table.proof tr[data-step] { transform: none; }
-/* the current line: a light tint of its highlight colour (each is the pair colour at 20% on white) */
-table.proof tr.now td { background: #ececed; }
-table.proof tr.now[data-c="1"] td { background: #ccdaeb; }
-table.proof tr.now[data-c="2"] td { background: #f7cccf; }
-table.proof tr.now[data-c="3"] td { background: #f1e2d5; }
-
-/* Answer blanks and option buttons */
-.blank { display: inline-block; width: 4.2em; border-bottom: 0.1rem solid var(--ink); margin: 0 .2em; vertical-align: -0.2em; }
-.fills { display: grid; grid-template-columns: repeat(3, auto); gap: .6rem 2.4rem; justify-content: start; font-size: 1.6rem; margin-top: .6rem; }
-.btn .opt { font-family: var(--font-display); margin-right: .6rem; }
-.choice.opts .btn { font-size: 1.4rem; padding: .4rem 1.1rem; }
-
-/* Blue answer scenes */
-.answers { display: grid; grid-template-columns: repeat(3, auto); gap: 1.1rem 4rem; justify-content: start; font-size: 2.6rem; }
-.answers.two-col { grid-template-columns: repeat(2, auto); }
-.blue .note { border-top-color: var(--white); }
-.blue .rule { border-top: 0.14rem solid var(--red); padding-top: 1rem; }
-
-/* Animated drawings */
-.status { height: 1.6em; margin: .3rem 0 0; font-weight: 400; color: var(--blue); font-size: 1.5rem; }
 #fitSvg text, #fit0Svg text { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; text-anchor: middle; dominant-baseline: central; }
 #orderSvg text { font-family: "Times New Roman", Times, serif; text-anchor: middle; }
 #orderSvg .it { font-style: italic; }
-.lines3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
-.lines3 .cap { font-size: 1.6rem; color: var(--ink); text-align: center; margin-top: .4rem; }
-.rules { display: flex; flex-direction: column; gap: 1.6rem; }
-.rules .r1 { display: grid; grid-template-columns: 4rem 1fr; gap: 1.5rem; align-items: baseline; border-top: 0.07rem solid var(--frame); padding-top: 1rem; }
-.rules .n { font-family: var(--font-display); font-size: 3rem; color: var(--blue); line-height: 1; }
-.rules p { margin: 0; font-size: 2.1rem; line-height: 1.3; }
-.rules .sub { font-size: 1.35rem; color: var(--ink-muted); margin-top: .3rem; }
 </style>
 </head>
 <!-- data-reading links back to the reading version (the 5.1 page of the self-study site). -->
@@ -398,106 +318,17 @@ table.proof tr.now[data-c="3"] td { background: #f1e2d5; }
   <div class="foot"><h2>5.1 | Practise</h2></div>
 </section>
 
-<script src="vendor/katex/katex.min.js"></script>
-<script src="js/core.js"></script>
-<script src="js/geom.js"></script>
-<script src="js/check.js"></script>
-<script src="js/question.js"></script>
-<script src="live/live.js"></script>
+<script src="vendor/katex/katex.min.js?v=4881bfc9"></script>
+<script src="js/core.js?v=eb489902"></script>
+<script src="js/geom.js?v=1c7cddc4"></script>
+<script src="js/check.js?v=b1e47a74"></script>
+<script src="js/question.js?v=e4308582"></script>
+<script src="live/live.js?v=4d78ca3d"></script>
+<script src="live/lesson.js?v=ef6bdcf3"></script>
 <script>
 'use strict';
-/* ---------- 1. Maths: render every $...$ before anything is built or bound ---------- */
-// Punctuation straight after maths is kept with it, so a line never starts with a lone "." or "?".
-document.querySelectorAll('.scene').forEach(s => {
-  s.innerHTML = TEX.render(s.innerHTML.replace(/(\$[^$]+\$)([.,;:?!])/g, '<span class="nobr">$1$2</span>'));
-});
-
-/* ---------- 2. Helpers ---------- */
-const $ = id => document.getElementById(id);
-const C = n => 'var(--c' + n + ')';
-// Call fn(shown) now and whenever el gains or loses the "shown" class (a step press, or back).
-function onShown(el, fn) {
-  fn(el.classList.contains('shown'));
-  new MutationObserver(() => fn(el.classList.contains('shown'))).observe(el, { attributes: true, attributeFilter: ['class'] });
-}
-function figInto(id, spec, hl) {
-  const f = G.draw(spec);
-  if (hl) f.highlight(hl);
-  $(id).append(f.svg);
-  return f;
-}
-// [['PQR','XYZ',1]] -> [['PQR',1],['XYZ',1]]
-function hlList(hl) {
-  const out = [];
-  (hl || []).forEach(h => { const n = typeof h[h.length - 1] === 'number' ? h[h.length - 1] : 1; h.forEach(p => { if (typeof p === 'string') out.push([p, n]); }); });
-  return out;
-}
-/* A worked solution: proof lines appear one per press; the figure highlights the parts of the
-   latest line that names some. firstStep lets fixed lines show from the start (0). */
-function solution(figId, proofId, spec, steps, firstStep) {
-  const fig = figInto(figId, spec);
-  const { table, trs } = QR.proofTable(steps, {}, [], { returnRows: true });
-  $(proofId).append(table);
-  let n = 0;
-  trs.forEach((tr, i) => {
-    if (steps[i].fixed) return;
-    n++;
-    tr.dataset.step = n;
-  });
-  // Only act when the latest highlighted line changes: marking a row "now" is itself a class
-  // change the observer sees, so an unconditional update would call itself for ever.
-  let current = null;
-  const update = () => {
-    let last = -1;
-    trs.forEach((tr, i) => { if (steps[i].hl && (steps[i].fixed || tr.classList.contains('shown'))) last = i; });
-    if (last === current) return;
-    if (current !== null && current >= 0) trs[current].classList.remove('now');
-    current = last;
-    fig.clearHL();
-    // The current line's band takes the colour of the parts it lights (blue, red or gold pair),
-    // so the line and the figure match. A line that lights parts in several colours gets a grey band.
-    if (last >= 0) {
-      const list = hlList(steps[last].hl), cols = [...new Set(list.map(([, n]) => n))];
-      fig.highlight(list);
-      trs[last].dataset.c = cols.length === 1 ? cols[0] : 'mix';
-      trs[last].classList.add('now');
-    }
-  };
-  trs.forEach(tr => { if (tr.dataset.step) new MutationObserver(update).observe(tr, { attributes: true, attributeFilter: ['class'] }); });
-  update();
-  return fig;
-}
-// The figure pulled apart into its triangles; returns a function that sets apart (true) or together.
-function splitFig(id, spec, tris, gap) {
-  const w = spec.w || 320, h = spec.h || 200, pad = 50;
-  const pts = G.resolve(spec);
-  const svg = G.mk('svg', { viewBox: `${-pad} ${-pad / 2} ${w + 2 * pad} ${h + pad}`, class: 'fig', role: 'img', 'aria-label': 'The figure, which the hint pulls apart into its two triangles' });
-  const allC = G.centroid(Object.values(pts));
-  const inTri = (t, k) => [...k].every(L => t.includes(L));
-  const filt = (obj, t) => { const o = {}; for (const k in obj || {}) if (inTri(t, k)) o[k] = obj[k]; return o; };
-  const groups = tris.map((t, i) => {
-    const sub = { w, h, polys: [t], ticks: filt(spec.ticks, t), arcs: filt(spec.arcs, t), rights: (spec.rights || []).filter(k => inTri(t, k)), st: filt(spec.st, t), at: filt(spec.at, t) };
-    const tp = {}; [...t].forEach(L => { tp[L] = pts[L]; });
-    const g = G.mk('g', { class: 'tri-g' }, svg);
-    const f = G.draw(sub, { pts: tp });
-    [...f.svg.childNodes].forEach(c => g.appendChild(c));
-    let d = G.V.sub(G.centroid([...t].map(L => pts[L])), allC);
-    if (G.V.len(d) < 6) d = i === 0 ? [-1, 0] : [1, 0];
-    return { g, off: G.V.mul(G.V.unit(d), gap || 46) };
-  });
-  // A vertex both triangles share (E here) gets a label from each triangle. Together, that would
-  // show it twice, so show the whole figure's single label then, and each triangle's own when apart.
-  const shared = Object.keys(pts).filter(L => tris.filter(t => t.includes(L)).length > 1);
-  groups.forEach(({ g }) => g.querySelectorAll('text.lbl').forEach(t => { if (shared.includes(t.textContent)) t.classList.add('own'); }));
-  const whole = G.draw(spec);
-  whole.svg.querySelectorAll('text.lbl').forEach(t => { if (shared.includes(t.textContent)) { t.classList.add('joined'); svg.appendChild(t); } });
-  svg.classList.add('split-fig');
-  $(id).append(svg);
-  return apart => {
-    svg.classList.toggle('apart', !!apart);
-    groups.forEach(({ g, off }) => { g.style.transform = apart ? `translate(${off[0].toFixed(1)}px, ${off[1].toFixed(1)}px)` : 'none'; });
-  };
-}
+/* ---------- 1–2. Maths and helpers: live/lesson.js ---------- */
+const { $, C, onShown, figInto, solution, splitFig } = L5;
 
 /* ---------- 3. Figures (the same figures as the reading version, data/s51.js) ---------- */
 const DEF = { w: 340, h: 180, pts: { A: [60, 30], B: [20, 150], C: [150, 150], X: [230, 30], Y: [190, 150], Z: [320, 150] }, polys: ['ABC', 'XYZ'] };
