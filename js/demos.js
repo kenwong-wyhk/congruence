@@ -199,9 +199,8 @@ const DEMO = (() => {
     const sliderLab = U.el('label', { class: 'small' });
     const slider = U.el('input', { type: 'range' });
     sliderLab.append(slider);
-    const checks = U.el('ul', { class: 'checks' });
     const status = U.el('div', { class: 'status', 'aria-live': 'polite' });
-    box.append(tabs, givenP, U.el('div', { class: 'fig-wrap' }, svg), sliderLab, checks, status);
+    box.append(tabs, givenP, U.el('div', { class: 'fig-wrap' }, svg), sliderLab, status);
     let cfg, sols, found, key, S, ox, oy;
     const toSvg = p => [ox + p[0] * S, oy - p[1] * S];
 
@@ -214,7 +213,7 @@ const DEMO = (() => {
       for (let i = 0; i <= 40; i++) { const P = cfg.build(cfg.min + (cfg.max - cfg.min) * i / 40); all.push(P.A, P.B, P.C); }
       const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
       const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
-      S = Math.min(280 / (maxx - minx || 1), 180 / (maxy - miny || 1));
+      S = Math.min(200 / (maxx - minx || 1), 130 / (maxy - miny || 1));   // a margin all round for the values
       ox = 170 - (minx + maxx) / 2 * S; oy = 115 + (miny + maxy) / 2 * S;
       slider.min = cfg.min; slider.max = cfg.max; slider.step = cfg.step;
       slider.value = cfg.min + (cfg.max - cfg.min) * 0.15;
@@ -243,13 +242,41 @@ const DEMO = (() => {
         const q = V.add(pts[i], V.mul(V.unit(V.sub(pts[i], c)), 13));
         mk('text', { x: f2(q[0]), y: f2(q[1]), class: 'lbl' }, svg).textContent = L;
       });
-      U.clear(checks);
+      // The three fixed parts, measured live and written ON the figure. Each value has ONE place, so it
+      // moves only with the triangle and never jumps: an angle's value sits just outside its vertex,
+      // beyond the vertex letter (its arc stays inside the angle); a length sits beside the middle of
+      // its side, outside the triangle. Blue with ✓ when it has the fixed value; otherwise "now ≠ needed".
+      // One continuous rule, so nothing switches or jumps: the value's centre is a fixed gap out from its
+      // vertex or side, plus half its own width and height in that direction (its near edge stays put).
+      const at = L => pts['ABC'.indexOf(L)];
+      const said = [];
       cs.forEach(ch => {
         const good = okCheck(ch);
-        const val = ch.deg ? Math.round(ch.v) + '°' : ch.v.toFixed(2);
-        const tgt = ch.deg ? ch.t + '°' : ch.t;
-        checks.append(U.el('li', { class: good ? 'yes' : 'no' }, U.el('span', { class: 'mk', text: good ? '✓' : '·' }), U.el('span', { html: TEX.m(`${ch.l} = ${val}`) + (good ? '' : ` <span class="muted">(needs ${tgt})</span>`) })));
+        const now = ch.deg ? Math.round(ch.v) + '°' : String(+ch.v.toFixed(2));
+        const need = ch.deg ? ch.t + '°' : String(ch.t);
+        const text = good ? need + ' ✓' : now + ' ≠ ' + need;
+        const col = good ? 'var(--blue)' : 'var(--ink)';
+        let base, dir, gap;
+        if (ch.deg) {
+          const L = ch.l.replace('∠', ''), Bv = at(L[1]), Av = at(L[0]), Cv = at(L[2]);
+          mk('path', { d: G.sectorPath(Bv, Av, Cv, 18).d, fill: 'none', stroke: col, 'stroke-width': 1.6 }, svg);
+          base = Bv; dir = V.unit(V.sub(Bv, c)); gap = 24;   // straight out from the centre, past the vertex letter
+        } else {
+          const P1 = at(ch.l[0]), P2 = at(ch.l[1]);
+          base = V.mid(P1, P2); dir = V.perp(V.unit(V.sub(P2, P1))); gap = 8;
+          if (V.dot(dir, V.sub(base, c)) < 0) dir = V.mul(dir, -1);   // outside the triangle
+        }
+        const hw = text.length * 4, hh = 8;   // about half the width and height of the text at 14px
+        // along dir, a box of half-size (hw, hh) reaches hw|dx| + hh|dy| from its centre: push it out by that
+        const p = V.add(base, V.mul(dir, gap + hw * Math.abs(dir[0]) + hh * Math.abs(dir[1])));
+        // kept inside the picture (this only bites at the far ends of a slider)
+        p[0] = Math.min(340 - hw - 2, Math.max(hw + 2, p[0])); p[1] = Math.min(230 - hh - 2, Math.max(hh + 2, p[1]));
+        const t = mk('text', { class: 'txt', x: f2(p[0]), y: f2(p[1]),
+          style: `fill:${col};font-weight:${good ? 600 : 400};font-size:14px` }, svg);
+        t.textContent = text;
+        said.push(`${ch.l} ${good ? 'is ' + need : 'is ' + now + ', needs ' + need}`);
       });
+      svg.setAttribute('aria-label', 'Triangle being built: ' + said.join('; '));
       let msg = '', good = false;
       if (key === 'AAA') {
         good = true;
